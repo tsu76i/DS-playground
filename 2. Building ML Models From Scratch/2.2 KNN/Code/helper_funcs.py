@@ -2,7 +2,6 @@ import numpy as np
 import pandas as pd
 from typing import Tuple
 from numpy.typing import NDArray
-from scipy.spatial.distance import cdist
 
 
 class HelperFuncs:
