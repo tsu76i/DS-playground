@@ -1,0 +1,177 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from typing import Tuple, List
+from numpy.typing import NDArray
+from scipy.spatial.distance import cdist
+from classification_metrics import ClassificationMetrics
+
+
+class CustomKNNClassifier:
+    """
+    A simple K-Nearest Neighbours (KNN) classifier.
+    """
+
+    def __init__(self, k: int = 3) -> None:
+        """
+        Initialise the model with k, the number of neighbours.
+
+        Args: 
+            k (int): The number of nearest neighbours to consider for classification. default = 3.
+        """
+        self.k = k
+
+    def fit(self, X_train: NDArray[np.float64], y_train: NDArray[np.str_]) -> None:
+        """
+        Fit the training data.
+
+        Args:
+            X_train (NDArray[np.float64]): Training features, a 2D array with rows (samples) and columns (features).
+            y_train (NDArray[np.str_]): Training labels, a 1D array of labels corresponding to X_train.
+        """
+        self.X_train = X_train
+        self.y_train = y_train
+
+    def calculate_distance(self, x1: float, x2: float) -> float:
+        """
+        Calculate the Euclidean distance between two points.
+
+        Args:
+            x1 (float): First point.
+            x2 (float): Second point.
+
+        Returns:
+            float: The Euclidean distance between x1 and x2.
+        """
+        return np.sqrt(np.sum((x1 - x2) ** 2))
+
+    def majority_vote(self, labels_row: NDArray[np.str_ | np.int64]) -> str | int:
+        """
+        Determines the most frequent label in an array of labels.
+
+        Args:
+            labels_row (NDArray[np.str_ | np.int64]): A 1D array containing the labels 
+                                                    of the k nearest neighbours.
+
+        Returns:
+            str: The most frequent label in the input array.
+        """
+        unique_labels, counts = np.unique(labels_row, return_counts=True)
+        most_frequent_label = unique_labels[np.argmax(counts)]
+        return most_frequent_label
+
+    def predict(self, X_test: NDArray[np.float64]) -> (
+            Tuple[str, NDArray[np.int64], NDArray[np.str_]] | NDArray[np.str_]):
+        """
+        Predicts the labels for the given test data.
+
+        Args:
+            X_test (NDArray[np.float64]): Test features, either a single sample (1D array) 
+                                        or multiple samples (2D array).
+
+        Returns:
+            If X_test is a single sample (1D array):
+                Tuple[str, NDArray[np.int64], NDArray[np.str_]]: 
+                - The most frequent label among k nearest neighbours.
+                - Indices of the k nearest neighbours.
+                - Labels of the k nearest neighbours.
+
+            If X_test is multiple samples (2D array):
+                NDArray[np.str_]: Predicted labels for all test samples.
+        """
+        is_single_sample = X_test.ndim == 1
+
+        # Reshape if X is a single sample
+        X_test = X_test.reshape(1, -1) if is_single_sample else X_test
+
+        # Calculate Euclidean distances
+        distances = cdist(X_test, self.X_train, metric='euclidean')
+
+        # Identify the indices of k-neighbours
+        k_neighbours_idx = np.argpartition(
+            distances, kth=self.k-1, axis=1)[:, :self.k]
+
+        # Identify the labels of k-neighbours
+        k_neighbours_labels = self.y_train[k_neighbours_idx]
+
+        if is_single_sample:
+            most_common = self.majority_vote(k_neighbours_labels.flatten())
+            return most_common, k_neighbours_idx.flatten(), k_neighbours_labels.flatten()
+
+        predictions = np.array([self.majority_vote(labels)
+                               for labels in k_neighbours_labels])
+        return predictions
+
+
+def train_test_split(X: NDArray, y: NDArray, test_size: float = 0.2,
+                     random_state: int = None) -> Tuple[NDArray, NDArray, NDArray, NDArray]:
+    """
+    Split arrays or matrices into random train and test subsets.
+
+    Args:
+        X (NDArray): Input features, a 2D array with rows (samples) and columns (features).
+        y (NDArray): Target values/labels, a 1D array with rows (samples).
+        test_size (float): Proportion of the dataset to include in the test split. Must be between 0.0 and 1.0. default = 0.2
+        random_state (int): Seed for the random number generator to ensure reproducible results. default = None
+
+    Returns:
+        tuple[NDArray, NDArray, NDArray, NDArray]:
+        A tuple containing:
+            - X_train (NDArray): Training set features.
+            - X_test (NDArray): Testing set features.
+            - y_train (NDArray): Training set target values.
+            - y_test (NDArray): Testing set target values.
+    """
+    # Set a random seed if it exists
+    if random_state:
+        np.random.seed(random_state)
+
+    # Create a list of numbers from 0 to len(X)
+    indices = np.arange(len(X))
+
+    # Shuffle the indices
+    np.random.shuffle(indices)
+
+    # Define the size of our test data from len(X)
+    test_size = int(test_size * len(X))
+
+    # Generate indices for test and train data
+    test_indices: NDArray[np.int64] = indices[:test_size]
+    train_indices: NDArray[np.int64] = indices[test_size:]
+
+    # Return: X_train, X_test, y_train, y_test
+    return X[train_indices], X[test_indices], y[train_indices], y[test_indices]
+
+
+def main():
+    df = pd.read_csv('2. Building ML Models From Scratch/_datasets/iris.csv')
+    k = 7
+    for feature in ['sepal', 'petal']:
+        # Separate features and labels
+        X = df[[f'{feature}_length', f'{feature}_width']].values
+        y = df['species'].values
+
+        # Split the dataset
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=0.2, random_state=42)
+
+        # Initialise and fit train data to KNN Classifier
+        knn_classifier = CustomKNNClassifier(k=k)
+        knn_classifier.fit(X_train, y_train)
+
+        # Make predictions and calculate accuracy of the model
+        y_pred = knn_classifier.predict(X_test)
+        metrics = ClassificationMetrics(y_test, y_pred)
+        acc, prec, rec, f1, cm = metrics.evaluate()
+        print(f"Metrics for '{feature}' features with k = {k}:")
+        print(f"Accuracy (Custom): {acc:.4f}")
+        print(f"Precision: (Custom) {prec:.4f}")
+        print(f"Recall (Custom): {rec:.4f}")
+        print(f"F1-Score (Custom): {f1:.4f}")
+        print(f"Confusion Matrix (Custom):\n{cm}")
+        print('--------------------')
+
+
+if __name__ == '__main__':
+    main()
