@@ -91,14 +91,20 @@ class ClassificationMetrics:
         rec = self.recall()
         return 2 * (prec * rec) / (prec + rec + 1e-7)
 
-    def evaluate(self, class_names: List[str] = None) -> None:
+    def evaluate(self, class_names: List[str] = None) -> Tuple[float, float, float, float, NDArray[np.int64]]:
         """
-        Print evaluation metrics including accuracy, precision, recall, and F1-score for each class.
+        Calculate evaluation metrics including accuracy, precision, recall, and F1-score for each class.
 
         Args:
-            y_true (NDArray[np.str_]): True labels.
-            y_pred (NDArray[np.str_]): Predicted labels.
             class_names (List[str], optional): List of class names. Defaults to None.
+
+        Returns:
+            Tuple:
+            - float: Overall accuracy.
+            - float: Average precision.
+            - float: Average recall.
+            - float: Average F1-score.
+            - NDArray[np.int64]: Confusion matrix.
         """
         cm, class_names = self.confusion_matrix(class_names)
         acc = self.accuracy()

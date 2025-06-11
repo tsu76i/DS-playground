@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-from typing import Tuple
 from numpy.typing import NDArray
 from tqdm import tqdm
 
