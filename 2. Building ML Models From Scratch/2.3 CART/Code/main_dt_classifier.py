@@ -1,4 +1,5 @@
 from sklearn.datasets import load_breast_cancer
+import pandas as pd
 from helper_funcs import HelperFuncs
 from classification_metrics import ClassificationMetrics
 from custom_dt_classifier import CustomDecisionTreeClassifier
@@ -7,9 +8,12 @@ from custom_dt_classifier import CustomDecisionTreeClassifier
 def main():
     # Load dataset
     data = load_breast_cancer()
+    feature_names = data.feature_names.tolist()
+    class_names = data.target_names.tolist()
     X, y = data.data, data.target
-    feature_names = data.feature_names
-    class_names = data.target_names
+    df = pd.DataFrame(X, columns=feature_names)
+    df['diagnosis'] = y
+    X, y = df.drop('diagnosis', axis=1), df['diagnosis']
 
     # Split dataset
     X_train, X_test, y_train, y_test = HelperFuncs.train_test_split(
@@ -24,10 +28,10 @@ def main():
     y_pred = tree.predict(X_test)
 
     # Single prediction
-    sample = X_test[0]
+    sample = X_test.iloc[0]
     single_prediction = tree.predict(sample)
     print(
-        f"Predicted: {class_names[single_prediction]}, Actual: {class_names[y_test[0]]}")
+        f"Predicted: {class_names[single_prediction]}, Actual: {class_names[y_test.iloc[0]]}")
     metrics = ClassificationMetrics(y_test, y_pred)
     acc_custom, prec_custom, rec_custom, f1_custom, cm_custom = metrics.evaluate()
     print(f"Accuracy (Custom): {acc_custom:.4f}")

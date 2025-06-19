@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 from typing import Dict
 from numpy.typing import NDArray
 from node import Node
@@ -35,38 +36,38 @@ class CustomDecisionTreeRegressor:
         self.min_variance = min_variance
         self.min_sample_split = min_sample_split
 
-    def variance(self, y: NDArray[np.float64]) -> float:
+    def variance(self, y: pd.Series) -> float:
         """
         Calculate the variance.
 
         Args:
-            y (NDArray[np.float64]): Array of values.
+            y (pd.Series): Series of values.
 
         Returns:
             float: Variance value.
         """
         return np.var(y) if len(y) > 0 else 0
 
-    def mse(self, y: NDArray[np.float64]) -> float:
+    def mse(self, y: pd.Series) -> float:
         """
         Calculate the mean squared error.
 
         Args:
-            y (NDArray[np.float64]): Array of values.
+            y (pd.Series): Series of values.
 
         Returns:
             float: Mean squared error value.
         """
         return np.mean((y - np.mean(y)) ** 2) if len(y) > 0 else 0
 
-    def information_gain(self, y: NDArray[np.float64], y_left: NDArray[np.float64], y_right: NDArray[np.float64]) -> float:
+    def information_gain(self, y: pd.Series, y_left: pd.Series, y_right: pd.Series) -> float:
         """
         Compute the information gain of a split.
 
         Args:
-            y (NDArray[np.float64]): Values of the parent node.
-            y_left (NDArray[np.float64]): Values of the left child node.
-            y_right (NDArray[np.float64]): Values of the right child node.
+            y (pd.Series): Values of the parent node.
+            y_left (pd.Series): Values of the left child node.
+            y_right (pd.Series): Values of the right child node.
 
         Returns:
             float: Information gain from the split.
@@ -86,13 +87,13 @@ class CustomDecisionTreeRegressor:
         )
         return parent_metric - weighted_metric
 
-    def best_split(self, X: NDArray[np.float64], y: NDArray[np.float64]) -> Dict[int, np.float64]:
+    def best_split(self, X: pd.DataFrame, y: pd.Series) -> Dict[int, np.float64]:
         """
         Find the best feature and threshold to split the dataset.
 
         Args:
-            X (NDArray[np.float64]): Input features.
-            y (NDArray[np.float64]): Target values as float.
+            X (pd.DataFrame): Input features.
+            y (pd.Series): Target values as float.
 
         Returns:
             Dict[int, np.float64]: Best split details with keys 'feature_index' and 'threshold'.
@@ -122,18 +123,25 @@ class CustomDecisionTreeRegressor:
 
         return best_split
 
-    def build_tree(self, X: NDArray[np.float64], y: NDArray[np.float64], depth: int = 0) -> Node:
+    def build_tree(self, X: pd.DataFrame, y: pd.Series, depth: int = 0) -> Node:
         """
         Build the decision tree recursively.
 
         Args:
-            X (NDArray[np.float64]): Input features.
-            y (NDArray[np.float64]): Target variables as float.
+            X (pd.DataFrame): Input features.
+            y (pd.Series): Target variables as float.
             depth (int): Current depth of the tree.
 
         Returns:
             Node: Root node of the decision tree.
         """
+
+        # Convert DataFrames to NumPy arrays
+        if hasattr(X, 'to_numpy'):
+            X = X.to_numpy()
+        if hasattr(y, 'to_numpy'):
+            y = y.to_numpy().flatten()  # Ensure 1D array
+
         if (
             len(y) < self.min_sample_split or
             (self.max_depth is not None and depth == self.max_depth) or
@@ -161,24 +169,24 @@ class CustomDecisionTreeRegressor:
         feature_index: int = split["feature_index"]
         return Node(type="node", feature=feature_index, threshold=split["threshold"], left=left_tree, right=right_tree)
 
-    def fit(self, X: NDArray[np.float64], y: NDArray[np.float64], feature_names: NDArray[np.str_] = None) -> None:
+    def fit(self, X: pd.DataFrame, y: pd.Series, feature_names: NDArray[np.str_] = None) -> None:
         """
         Fit the decision tree regressor to the given data.
 
         Args:
-            X (NDArray[np.float64]): Input features.
-            y (NDArray[np.float64]): Target values.
+            X (pd.DataFrame): Input features.
+            y (pd.Series): Target values.
             feature_names (NDArray[np.str_], optional): Names of the features. Defaults to None.
         """
         self.feature_names = feature_names
         self.root = self.build_tree(X, y)
 
-    def traverse_tree(self, x: NDArray[np.float64], node: Node) -> float:
+    def traverse_tree(self, x: pd.DataFrame, node: Node) -> float:
         """
         Traverse the decision tree to make a prediction for a single sample.
 
         Args:
-            x (NDArray[np.float64]): Single sample.
+            x (pd.DataFrame): Single sample.
             node (Node): Current node.
 
         Returns:
@@ -193,16 +201,20 @@ class CustomDecisionTreeRegressor:
         else:
             return self.traverse_tree(x, node.right)
 
-    def predict(self, X: NDArray[np.float64]) -> float | NDArray[np.float64]:
+    def predict(self, X: pd.DataFrame) -> float | NDArray[np.float64]:
         """
         Predict values for the given dataset.
 
         Args:
-            X (NDArray[np.float64]): Input features.
+            X (pd.DataFrame): Input features.
 
         Returns:
             float or NDArray[np.float64]: Predicted value(s).
         """
+        # Convert DataFrames to NumPy arrays
+        if hasattr(X, 'to_numpy'):
+            X = X.to_numpy()
+
         if len(X.shape) == 1:
             return self.traverse_tree(X, self.root)
         return np.array([self.traverse_tree(x, self.root) for x in X])

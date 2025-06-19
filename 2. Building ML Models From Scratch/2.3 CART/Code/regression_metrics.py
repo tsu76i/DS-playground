@@ -1,4 +1,6 @@
 import numpy as np
+import pandas as pd
+from numpy.typing import NDArray
 from typing import Tuple
 
 
@@ -7,13 +9,13 @@ class RegressionMetrics:
     A class to compute and evaluate regression metrics (MSE, RMSE, MAE, and R-Squared).
     """
 
-    def __init__(self, y_true, y_pred):
+    def __init__(self, y_true: pd.Series, y_pred: NDArray[np.float64]):
         """
         Initialise the ClassificationMetrics instance.
 
         Args:
-            y_true (NDArray[np.str_]): True labels of the dataset.
-            y_pred (NDArray[np.str_]): Predicted labels of the dataset.
+            y_true (pd.Series): True labels of the dataset.
+            y_pred (NDArray[np.float64]): Predicted labels of the dataset.
         """
         self.y_true = y_true
         self.y_pred = y_pred

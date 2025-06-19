@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 from typing import Tuple, List
 from numpy.typing import NDArray
 
@@ -8,7 +9,7 @@ class ClassificationMetrics:
     A class to compute and evaluate classification metrics (accuracy, precision, recall, and F1-score).
     """
 
-    def __init__(self, y_true, y_pred):
+    def __init__(self, y_true: pd.Series, y_pred: NDArray[np.str_]) -> None:
         """
         Initialise the ClassificationMetrics instance.
 

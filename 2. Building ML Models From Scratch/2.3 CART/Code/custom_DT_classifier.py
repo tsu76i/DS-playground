@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 from typing import Dict
 from numpy.typing import NDArray
 from node import Node
@@ -10,7 +11,7 @@ class CustomDecisionTreeClassifier:
 
     Args:
         max_depth (int or None): Maximum depth of the tree. None for unlimited depth.
-        metric (str): Splitting criterion, either "gini" or "entropy".
+        metric (str): Splitting criterion, either 'gini' or 'entropy'.
 
     Attributes:
         max_depth (int or None): Maximum depth of the tree.
@@ -27,12 +28,12 @@ class CustomDecisionTreeClassifier:
         self.feature_names = None
         self.class_names = None
 
-    def gini(self, y: NDArray[np.int64]) -> float:
+    def gini(self, y: pd.Series) -> float:
         """
         Calculate the Gini impurity.
 
         Args:
-            y (NDArray[np.int64]): Array of labels.
+            y (pd.Series): Series of labels.
 
         Returns:
             float: Gini impurity.
@@ -42,12 +43,12 @@ class CustomDecisionTreeClassifier:
         proportions = np.bincount(y) / len(y)
         return 1 - np.sum(proportions ** 2)
 
-    def entropy(self, y: NDArray[np.int64]) -> float:
+    def entropy(self, y: pd.Series) -> float:
         """
         Calculate the entropy.
 
         Args:
-            y (NDArray[np.int64]): Array of labels.
+            y (NDArray[np.int64]): Series of labels.
 
         Returns:
             float: Entropy value.
@@ -58,14 +59,14 @@ class CustomDecisionTreeClassifier:
         proportions = proportions[proportions > 0]  # Avoid log(0)
         return -np.sum(proportions * np.log2(proportions))
 
-    def information_gain(self, y: NDArray[np.int64], y_left: NDArray[np.int64], y_right: NDArray[np.int64]) -> float:
+    def information_gain(self, y: pd.Series, y_left: pd.Series, y_right: pd.Series) -> float:
         """
         Compute the information gain of a split.
 
         Args:
-            y (NDArray[np.int64]): Labels of the parent node.
-            y_left (NDArray[np.int64]): Labels of the left child node.
-            y_right (NDArray[np.int64]): Labels of the right child node.
+            y (pd.Series): Series of the parent node.
+            y_left (pd.Series): Series of the left child node.
+            y_right (pd.Series): Series of the right child node.
 
         Returns:
             float: Information gain from the split.
@@ -85,16 +86,19 @@ class CustomDecisionTreeClassifier:
         )
         return parent_metric - weighted_metric
 
-    def best_split(self, X: NDArray[np.float64], y: NDArray[np.int64]) -> dict:
+    def best_split(self, X: pd.DataFrame, y: pd.Series) -> Dict[str, int | str | float]:
         """
         Find the best feature and threshold to split the dataset.
 
         Args:
-            X (NDArray[np.float64]): Input features.
-            y (NDArray[np.int64]): Labels as int.
+            X (pd.DataFrame): Input features.
+            y (pd.Series): Labels as int.
 
         Returns:
-            dict: Best split details with keys 'feature_index' and 'threshold'.
+            dict: Dictionary containing the best split with keys:
+              - 'feature_index' (int): Index of the feature used for the split.
+              - 'feature_name' (str/int): Name or index of the feature.
+              - 'threshold' (float64): Threshold value for the split.
         """
         best_info_gain = float("-inf")
         best_split: Dict = None
@@ -127,18 +131,25 @@ class CustomDecisionTreeClassifier:
 
         return best_split
 
-    def build_tree(self, X: NDArray[np.float64], y: NDArray[np.int64], depth: int = 0) -> Node:
+    def build_tree(self, X: pd.DataFrame, y: pd.Series, depth: int = 0) -> Node:
         """
         Build the decision tree recursively.
 
         Args:
-            X (NDArray[np.float64]): Input features.
-            y (NDArray[np.int64]): Labels.
+            X (pd.DataFrame): Input features.
+            y (pd.Series): Labels.
             depth (int): Current depth of the tree.
 
         Returns:
             Node: Root node of the decision tree.
         """
+
+        # Convert DataFrames to NumPy arrays
+        if hasattr(X, 'to_numpy'):
+            X = X.to_numpy()
+        if hasattr(y, 'to_numpy'):
+            y = y.to_numpy().flatten()  # Ensure 1D array
+
         # Stop recursion if all labels are identical or max depth is reached
         if len(set(y)) == 1 or (self.max_depth is not None and depth == self.max_depth):
             return Node(type="leaf", value=np.argmax(np.bincount(y)))
@@ -165,14 +176,14 @@ class CustomDecisionTreeClassifier:
 
         return Node(type="node", feature=feature_index, threshold=split["threshold"], left=left_tree, right=right_tree)
 
-    def fit(self, X: NDArray[np.float64], y: NDArray[np.int64],
+    def fit(self, X: pd.DataFrame, y: pd.Series,
             class_names: NDArray[np.str_], feature_names: NDArray[np.str_] = None) -> None:
         """
         Fit the decision tree model to the given data.
 
         Args:
-            X (NDArray[np.float64]): Input features.
-            y (NDArray[np.int64]): Labels.
+            X (pd.DataFrame): Input features.
+            y (pd.Series): Labels.
             class_names (NDArray[np.str_]): Names of the labels.
             feature_names (NDArray[np.str_], optional): Names of the features. Defaults to None.
         """
@@ -180,12 +191,12 @@ class CustomDecisionTreeClassifier:
         self.class_names = class_names
         self.root = self.build_tree(X, y)
 
-    def traverse_tree(self, x: NDArray[np.float64], node: Node) -> int:
+    def traverse_tree(self, x: pd.DataFrame, node: Node) -> int:
         """
         Traverse the decision tree to make a prediction for a single sample.
 
         Args:
-            x (NDArray[np.float64]): Single sample.
+            x (pd.DataFrame): Single sample.
             node (Node): Current node.
 
         Returns:
@@ -201,16 +212,20 @@ class CustomDecisionTreeClassifier:
         else:
             return self.traverse_tree(x, node.right)
 
-    def predict(self, X: NDArray[np.float64]) -> int | NDArray[np.int64]:
+    def predict(self, X: pd.DataFrame) -> int | NDArray[np.int64]:
         """
         Predict labels for the given dataset.
 
         Args:
-            X (NDArray[np.float64]): Input features.
+            X (pd.DataFrame): Input features.
 
         Returns:
             int or NDArray[np.int64]: Predicted label(s).
         """
+        # Convert DataFrames to NumPy arrays
+        if hasattr(X, 'to_numpy'):
+            X = X.to_numpy()
+
         if len(X.shape) == 1:
             return self.traverse_tree(X, self.root)
         return np.array([self.traverse_tree(x, self.root) for x in X])

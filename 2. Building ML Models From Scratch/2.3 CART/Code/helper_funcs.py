@@ -1,27 +1,28 @@
 from typing import Tuple
 import numpy as np
+import pandas as pd
 from numpy.typing import NDArray
 
 
 class HelperFuncs:
-    def train_test_split(X: NDArray, y: NDArray, test_size: float = 0.2,
-                         random_state: int = None) -> Tuple[NDArray, NDArray, NDArray, NDArray]:
+    def train_test_split(X: pd.DataFrame, y: pd.Series, test_size: float = 0.2,
+                         random_state: int = None) -> Tuple[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series]:
         """
         Split arrays or matrices into random train and test subsets.
 
         Args:
-            X (NDArray): Input features, a 2D array with rows (samples) and columns (features).
-            y (NDArray): Target values/labels, a 1D array with rows (samples).
+            X (pd.DataFrame): Input features, a 2D array with rows (samples) and columns (features).
+            y (pd.Series): Target values/labels, a 1D array with rows (samples).
             test_size (float): Proportion of the dataset to include in the test split. Must be between 0.0 and 1.0. default = 0.2
             random_state (int): Seed for the random number generator to ensure reproducible results. default = None
 
         Returns:
-            Tuple[NDArray, NDArray, NDArray, NDArray]:
+            tuple[NDArray, NDArray, NDArray, NDArray]:
             A tuple containing:
-                - X_train (NDArray): Training set features.
-                - X_test (NDArray): Testing set features.
-                - y_train (NDArray): Training set target values.
-                - y_test (NDArray): Testing set target values.
+                - X_train (pd.DataFrame): Training set features.
+                - X_test (pd.DataFrame): Testing set features.
+                - y_train (pd.Series): Training set target values.
+                - y_test (pd.Series): Testing set target values.
         """
         # Set a random seed if it exists
         if random_state:
@@ -41,4 +42,4 @@ class HelperFuncs:
         train_indices: NDArray[np.int64] = indices[test_size:]
 
         # Return: X_train, X_test, y_train, y_test
-        return X[train_indices], X[test_indices], y[train_indices], y[test_indices]
+        return X.iloc[train_indices], X.iloc[test_indices], y.iloc[train_indices], y.iloc[test_indices]

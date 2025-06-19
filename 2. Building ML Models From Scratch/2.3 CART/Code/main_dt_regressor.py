@@ -7,8 +7,8 @@ from custom_dt_regressor import CustomDecisionTreeRegressor
 def main():
     df = pd.read_csv(
         'https://raw.githubusercontent.com/YBI-Foundation/Dataset/refs/heads/main/Admission%20Chance.csv')
-    X = df.iloc[:, :-1].to_numpy()
-    y = df.iloc[:, -1].to_numpy()
+    X = df.iloc[:, :-1]
+    y = df.iloc[:, -1]
     feature_names = df.columns[:-1].tolist()  # All columns except the last one
     X_train, X_test, y_train, y_test = HelperFuncs.train_test_split(
         X, y, test_size=0.3, random_state=42)
@@ -28,10 +28,10 @@ def main():
     print("----------")
 
     # Single prediction
-    sample = X_test[0]
+    sample = X_test.iloc[0]
     single_prediction = tree.predict(sample)
     print(
-        f"Predicted: {single_prediction:.4f}, Actual: {y_test[0]:.4f}")
+        f"Predicted: {single_prediction:.4f}, Actual: {y_test.iloc[0]:.4f}")
     print("----------")
 
     # Print the tree structure
