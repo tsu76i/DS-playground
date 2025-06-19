@@ -23,14 +23,14 @@ def main():
     continuous_features = ['carat', 'x', 'y', 'z',
                            'depth', 'table', 'cut', 'color', 'clarity']
     df[continuous_features] = HelperFuncs.standardise(
-        df[continuous_features].values)
+        df[continuous_features])
     df[continuous_features] = HelperFuncs.normalise(
-        df[continuous_features].values)
+        df[continuous_features])
 
     # Prepare data
     MSE_list_custom, RMSE_list_custom, MAE_list_custom, R2_list_custom = [], [], [], []
-    X = df.drop(columns=['price']).values
-    y = df['price'].values
+    X = df.drop(columns=['price'])
+    y = df['price']
     k_range = range(1, 21)  # Generate k-values from 1 to 20
 
     # Split data
@@ -52,8 +52,8 @@ def main():
         print("-----------")
 
     # Prediction of a sample
-    x_single_2d = X_test[0]
-    y_pred = knn_reg.predict(x_single_2d)
+    x_single_2d = X_test.iloc[0]
+    y_pred = knn_reg.predict(x_single_2d.values)
     y_pred_scalar = y_pred[0]
     print("Predicted value:", y_pred_scalar)
 

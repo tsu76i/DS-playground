@@ -13,7 +13,7 @@ class ClassificationMetrics:
         Initialise the ClassificationMetrics instance.
 
         Args:
-            y_true (NDArray[np.str_]): True labels of the dataset.
+            y_true (pd.Series): True labels of the dataset.
             y_pred (NDArray[np.str_]): Predicted labels of the dataset.
         """
         self.y_true = y_true

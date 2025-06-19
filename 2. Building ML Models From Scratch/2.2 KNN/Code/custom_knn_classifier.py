@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 from typing import Tuple
 from numpy.typing import NDArray
 from scipy.spatial.distance import cdist
@@ -18,29 +19,16 @@ class CustomKNNClassifier:
         """
         self.k = k
 
-    def fit(self, X_train: NDArray[np.float64], y_train: NDArray[np.str_]) -> None:
+    def fit(self, X_train: pd.DataFrame, y_train: pd.Series) -> None:
         """
         Fit the training data.
 
         Args:
-            X_train (NDArray[np.float64]): Training features, a 2D array with rows (samples) and columns (features).
-            y_train (NDArray[np.str_]): Training labels, a 1D array of labels corresponding to X_train.
+            X_train (pd.DataFrame): Training features, pd.DataFrame with rows (samples) and columns (features).
+            y_train (pd.Series): Training labels, pd.Series of labels corresponding to X_train.
         """
-        self.X_train = X_train
-        self.y_train = y_train
-
-    def calculate_distance(self, x1: float, x2: float) -> float:
-        """
-        Calculate the Euclidean distance between two points.
-
-        Args:
-            x1 (float): First point.
-            x2 (float): Second point.
-
-        Returns:
-            float: The Euclidean distance between x1 and x2.
-        """
-        return np.sqrt(np.sum((x1 - x2) ** 2))
+        self.X_train = X_train.values
+        self.y_train = y_train.values
 
     def majority_vote(self, labels_row: NDArray[np.str_ | np.int64]) -> str | int:
         """
@@ -54,16 +42,15 @@ class CustomKNNClassifier:
             str: The most frequent label in the input array.
         """
         unique_labels, counts = np.unique(labels_row, return_counts=True)
-        most_frequent_label = unique_labels[np.argmax(counts)]
-        return most_frequent_label
+        return unique_labels[np.argmax(counts)]  # Most frequent labels
 
-    def predict(self, X_test: NDArray[np.float64]) -> (
+    def predict(self, X_test: pd.DataFrame) -> (
             Tuple[str, NDArray[np.int64], NDArray[np.str_]] | NDArray[np.str_]):
         """
         Predicts the labels for the given test data.
 
         Args:
-            X_test (NDArray[np.float64]): Test features, either a single sample (1D array) 
+            X_test (pd.DataFrame): Test features, either a single sample (1D array) 
                                         or multiple samples (2D array).
 
         Returns:

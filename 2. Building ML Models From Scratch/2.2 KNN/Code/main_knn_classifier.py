@@ -9,8 +9,8 @@ def main():
     k = 7
     for feature in ['sepal', 'petal']:
         # Separate features and labels
-        X = df[[f'{feature}_length', f'{feature}_width']].values
-        y = df['species'].values
+        X = df[[f'{feature}_length', f'{feature}_width']]
+        y = df['species']
 
         # Split the dataset
         X_train, X_test, y_train, y_test = HelperFuncs.train_test_split(
