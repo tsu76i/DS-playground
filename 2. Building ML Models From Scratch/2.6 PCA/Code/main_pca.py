@@ -7,23 +7,19 @@ from custom_pca import CustomPCA
 
 
 def main():
-    # Load data
-    wine_data = load_wine(as_frame=True)
+    wine_data = load_wine(as_frame=True)  # Load data
     X = wine_data.data
 
-    # Standardise X
-    X_standardised = HelperFuncs.standardise_data(X)
+    X_standardised = HelperFuncs.standardise_data(X)  # Standardise X
 
-    # Fit
-    custom_pca = CustomPCA(n_components=X.shape[1])
-    custom_pca.fit(X_standardised)
+    custom_pca = CustomPCA(n_components=X.shape[1])  # Initialise CustomPCA
+    custom_pca.fit(X_standardised)  # Fit
 
-    # Plot EV & CEV
     explained_variance_ratio = custom_pca.explained_variance_ratio
     cumulative_explained_variance = custom_pca.cumulative_explained_variance
 
     HelperFuncs.plot_explained_variance(explained_variance_ratio,
-                                        cumulative_explained_variance)
+                                        cumulative_explained_variance)  # Plot EV & CEV
 
     # Re-initialise and fit with n_components = 8
     custom_pca = CustomPCA(n_components=8)

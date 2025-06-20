@@ -7,19 +7,19 @@ class CustomPCA:
     Custom implementation of Principal Component Analysis (PCA) for dimensionality reduction.
 
     Attributes:
-        n_components (int): Number of principal components to retain.
-        components (NDArray[np.float64]): Principal axes in feature space.
-        mean (NDArray[np.float64]): Per-feature mean, estimated from the training set.
-        eigenvalues (NDArray[np.float64]): Eigenvalues corresponding to the selected components.
-        all_eigenvalues (NDArray[np.float64]): All eigenvalues from the covariance matrix.
+        n_components: Number of principal components to retain.
+        components: Principal axes in feature space.
+        mean: Per-feature mean, estimated from the training set.
+        eigenvalues: Eigenvalues corresponding to the selected components.
+        all_eigenvalues: All eigenvalues from the covariance matrix.
     """
 
-    def __init__(self, n_components: int):
+    def __init__(self, n_components: int) -> None:
         """
         Initialise the CustomPCA object.
 
         Args:
-            n_components (int): Number of principal components to retain.
+            n_components: Number of principal components to retain.
         """
         self.n_components = n_components
         self.components = None
@@ -35,7 +35,7 @@ class CustomPCA:
         and selects the top n_components principal components.
 
         Args:
-            X_standardised (NDArray[np.float64]): Standardised input features of shape (n_samples, n_features).
+            X_standardised: Standardised input features of shape (n_samples, n_features).
         """
         # Calculate the covariance matrix
         cov_matrix = np.cov(X_standardised, rowvar=False)
@@ -54,10 +54,10 @@ class CustomPCA:
         Project the data onto the principal components.
 
         Args:
-            X_standardised (NDArray[np.float64]): Standardised input features of shape (n_samples, n_features).
+            X_standardised: Standardised input features of shape (n_samples, n_features).
 
         Returns:
-            NDArray[np.float64]: Transformed data of shape (n_samples, n_components).
+            Transformed data of shape (n_samples, n_components).
         """
         if self.components is None:
             raise ValueError("Fit the PCA model before transforming data.")
@@ -69,11 +69,11 @@ class CustomPCA:
         The proportion of variance explained by each principal component.
 
         Returns:
-            NDArray[np.float64]: Explained variance ratio for each component.
+            Explained variance ratio for each component.
         """
         if self.eigenvalues is None:
             raise ValueError(
-                "Fit the model before accessing explained_variance_ratio.")
+                'Fit the model before accessing explained_variance_ratio.')
         return self.eigenvalues / np.sum(self.all_eigenvalues)
 
     @property
@@ -82,9 +82,9 @@ class CustomPCA:
         The cumulative sum of explained variance ratios.
 
         Returns:
-            NDArray[np.float64]: Cumulative explained variance ratio.
+            Cumulative explained variance ratio.
         """
         if self.eigenvalues is None:
             raise ValueError(
-                "Fit the model before accessing cumulative_explained_variance.")
+                'Fit the model before accessing cumulative_explained_variance.')
         return np.cumsum(self.explained_variance_ratio)

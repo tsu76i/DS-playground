@@ -10,7 +10,6 @@ HistoryType = List[Dict[str, NDArray[np.float64] | NDArray[np.int64]]]
 
 
 def main():
-
     k = 4
     palette = sns.color_palette('bright', n_colors=k)
 

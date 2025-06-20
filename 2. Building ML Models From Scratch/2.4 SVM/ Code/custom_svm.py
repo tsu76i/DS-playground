@@ -169,7 +169,7 @@ class CustomSVM:
 
         Parameters:
             X: Training dataset of shape (n_samples, n_features).
-            y: Labels of shape (n_samples).
+            y: Labels of shape (n_samples,).
         """
         n = len(y)
         alphas = np.zeros(n)
@@ -268,7 +268,7 @@ class CustomSVM:
             X_test: Test samples of shape (n_samples, n_features).
 
         Returns:
-            Predicted labels of shape (n_samples).
+            Predicted labels of shape (n_samples,).
         """
         return np.sign(self.decision_function(X_test))
 

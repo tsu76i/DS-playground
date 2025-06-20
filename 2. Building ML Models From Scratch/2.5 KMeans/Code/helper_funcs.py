@@ -15,18 +15,17 @@ class HelperFuncs:
         Split arrays or matrices into random train and test subsets.
 
         Args:
-            X (NDArray): Input features, a 2D array with rows (samples) and columns (features).
-            y (NDArray): Target values/labels, a 1D array with rows (samples).
-            test_size (float): Proportion of the dataset to include in the test split. Must be between 0.0 and 1.0. default = 0.2
-            random_state (int): Seed for the random number generator to ensure reproducible results. default = None
+            X: Input features, a 2D array with rows (samples) and columns (features).
+            y: Target values/labels, a 1D array with rows (samples).
+            test_size: Proportion of the dataset to include in the test split. Must be between 0.0 and 1.0. default = 0.2
+            random_state: Seed for the random number generator to ensure reproducible results. default = None
 
         Returns:
-            Tuple[NDArray, NDArray, NDArray, NDArray]:
             A tuple containing:
-                - X_train (NDArray): Training set features.
-                - X_test (NDArray): Testing set features.
-                - y_train (NDArray): Training set target values.
-                - y_test (NDArray): Testing set target values.
+                - X_train: Training set features.
+                - X_test: Testing set features.
+                - y_train: Training set target values.
+                - y_test: Testing set target values.
         """
         # Set a random seed if it exists
         if random_state:
@@ -54,14 +53,11 @@ class HelperFuncs:
         Plot K-Means clustered data with centroids for given features.
 
         Args:
-        - df (pd.DataFrame): DataFrame containing the dataset.
-        - features (List[str]): List of feature names to plot (e.g., ['sepal', 'petal']).
-        - clusters_list (List[NDArray[np.int64]]): List of cluster label arrays, one for each feature set.
-        - centroids_list (List[NDArray[np.float64]]): List of centroid arrays, one for each feature set.
-        - palette (List[str]): Seaborn colour palette for cluster colours.
-
-        Returns:
-        - None: The function displays the plot but does not return any value.
+            - df: DataFrame containing the dataset.
+            - features: List of feature names to plot (e.g., ['sepal', 'petal']).
+            - clusters_list: List of cluster label arrays, one for each feature set.
+            - centroids_list: List of centroid arrays, one for each feature set.
+            - palette: Seaborn colour palette for cluster colours.
         """
         colors = palette.as_hex()
         fig, axes = plt.subplots(
@@ -108,14 +104,11 @@ class HelperFuncs:
         Visualise the progression of K-Means clustering through iterations.
 
         Args:
-        - X (NDArray[np.float64]): Data points, shape (n_samples, n_features).
-        - history (HistoryType): List of dictionaries storing centroids and labels at each iteration.
-        - title (str): Title for the plot.
-        - palette (List[str]): Seaborn colour palette for cluster colours.
-        - steps (int): Number of steps/iterations to visualise.
-
-        Returns:
-        - None: The function displays the plot but does not return any value.
+            - X: Data points, shape (n_samples, n_features).
+            - history: List of dictionaries storing centroids and labels at each iteration.
+            - title: Title for the plot.
+            - palette: Seaborn colour palette for cluster colours.
+            - steps: Number of steps/iterations to visualise.
         """
         colors = palette.as_hex()
         total_iters = len(history)
@@ -144,8 +137,8 @@ class HelperFuncs:
                            edgecolor='black', linewidth=1.5, label=f'Centroid {j}')
 
             ax.set_title(f'Iteration {idx}')
-            ax.set_xlabel("Length (cm)")
-            ax.set_ylabel("Width (cm)")
+            ax.set_xlabel('Length (cm)')
+            ax.set_ylabel('Width (cm)')
             ax.set_xlim(X[:, 0].min() - 0.5, X[:, 0].max() + 0.5)
             ax.set_ylim(X[:, 1].min() - 0.5, X[:, 1].max() + 0.5)
 
@@ -158,8 +151,8 @@ class HelperFuncs:
         Plot the elbow curve to determine optimal k.
 
         Args:
-            k_values (List[int]): List of k values.
-            wcss_values (List[float]): Corresponding WCSS values.
+            k_values: List of k values.
+            wcss_values: Corresponding WCSS values.
         """
         plt.figure(figsize=(10, 6))
         plt.plot(k_values, wcss_values, 'bo-', linewidth=2, markersize=8)
@@ -182,9 +175,9 @@ class HelperFuncs:
                             label=f'Potential Elbow at k={k_values[elbow_idx]}')
                 plt.legend()
             else:
-                print("Elbow point could not be reliably determined.")
+                print('Elbow point could not be reliably determined.')
         else:
-            print("Insufficient data points to determine an elbow point.")
+            print('Insufficient data points to determine an elbow point.')
         plt.show()
 
     def plot_evaluation_metrics(k_values: List[int], wcss_list: List[float], bcss_list: List[float], tss_list: List[float]) -> None:
@@ -192,10 +185,10 @@ class HelperFuncs:
         Plot WCSS, BCSS, and TSS metrics against k values.
 
         Args:
-            k_values (List[int]): List of k values used for KMeans clustering.
-            wcss_list (List[float]): Within-Cluster Sum of Squares values.
-            bcss_list (List[float]): Between-Cluster Sum of Squares values.
-            tss_list (List[float]): Total Sum of Squares values.
+            k_values: List of k values used for KMeans clustering.
+            wcss_list: Within-Cluster Sum of Squares values.
+            bcss_list: Between-Cluster Sum of Squares values.
+            tss_list: Total Sum of Squares values.
         """
         fig, axes = plt.subplots(1, 3, figsize=(18, 5))  # 3 subplots in 1 row
         metrics_list = wcss_list, bcss_list, tss_list
@@ -219,7 +212,7 @@ class HelperFuncs:
 
         # For consistency of cluster colours
         colors = palette.as_hex()
-        methods = ["KMeans", "KMeans++"]
+        methods = ['KMeans', 'KMeans++']
         fig, axes = plt.subplots(1, 2, figsize=(12, 6))
 
         # Iterate over 2 axes and their corresponding cluster results
@@ -241,7 +234,7 @@ class HelperFuncs:
                 ax.scatter(centroid[cluster, 0], centroid[cluster, 1],
                            color=cluster_color, edgecolor='black', marker='*', s=200)
 
-            ax.set_title(f"{methods[i]} Clustering ({title})")
+            ax.set_title(f'{methods[i]} Clustering ({title})')
             ax.legend()
 
         # Adjust layout and display

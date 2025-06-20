@@ -1,18 +1,18 @@
 import numpy as np
 from numpy.typing import NDArray
-from typing import List, Dict
+from typing import List, Dict, Tuple
 HistoryType = List[Dict[str, NDArray[np.float64] | NDArray[np.int64]]]
 
 
 class KMeansMetrics:
-    def __init__(self, X: NDArray[np.float64], labels: NDArray[np.int64], centroids: NDArray[np.float64]):
+    def __init__(self, X: NDArray[np.float64], labels: NDArray[np.int64], centroids: NDArray[np.float64]) -> None:
         """
         Initialise the ClassificationMetrics instance.
 
         Args:
-            X (NDArray[np.float64]): Data points, shape (n_samples, n_features).
-            labels (NDArray[np.int64]): Cluster assignments, shape (n_samples,).
-            centroids (NDArray[np.float64]): Cluster centers, shape (k, n_features).
+            X: Data points, shape (n_samples, n_features).
+            labels: Cluster assignments, shape (n_samples,).
+            centroids: Cluster centers, shape (k, n_features).
         """
         self.X = X
         self.labels = labels
@@ -23,7 +23,7 @@ class KMeansMetrics:
         Calculate Within-Cluster Sum of Squares (WCSS).
 
         Returns:
-            float: Within-cluster sum of squares (WCSS).
+            Within-cluster sum of squares (WCSS).
         """
         wcss = 0
         for i in range(len(self.centroids)):
@@ -39,7 +39,7 @@ class KMeansMetrics:
         Calculate Between-Cluster Sum of Squares (BCSS).
 
         Returns:
-            float: Between-cluster sum of squares (BCSS).
+            Between-cluster sum of squares (BCSS).
         """
         overall_mean = np.mean(self.X, axis=0)
         bcss = 0
@@ -57,17 +57,17 @@ class KMeansMetrics:
         Calculate Total Sum of Squares (TSS).
 
         Returns:
-            float: Total sum of squares (TSS).
+            Total sum of squares (TSS).
         """
         overall_mean = np.mean(self.X, axis=0)
         return np.sum((self.X - overall_mean) ** 2)
 
-    def evaluate(self):
+    def evaluate(self) -> Tuple[float, float, float]:
         """
         Evaluate WCSS, BCSS, and TSS metrics.
 
         Returns:
-            Tuple[float, float, float]: WCSS, BCSS, and TSS metrics.
+            WCSS, BCSS, and TSS metrics.
         """
         wcss = self.calculate_wcss()
         bcss = self.calculate_bcss()
