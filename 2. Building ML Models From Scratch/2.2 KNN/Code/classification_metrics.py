@@ -14,8 +14,8 @@ class ClassificationMetrics:
         Initialise the ClassificationMetrics instance.
 
         Args:
-            y_true (pd.Series): True labels of the dataset.
-            y_pred (NDArray[np.str_]): Predicted labels of the dataset.
+            y_true: True labels of the dataset.
+            y_pred: Predicted labels of the dataset.
         """
         self.y_true = y_true
         self.y_pred = y_pred
@@ -25,12 +25,11 @@ class ClassificationMetrics:
         Calculate the confusion matrix.
 
         Args:
-            class_names (List[str], optional): List of class names. Defaults to None.
+            class_names: List of class names. Defaults to None.
 
         Returns:
-            Tuple: 
-            - NDArray[np.int64]: Confusion matrix.
-            - List[str]: List of class names.
+            - Confusion matrix.
+            - List of class names.
         """
         # Encode labels as integers
         unique_classes = np.unique(self.y_true)
@@ -53,7 +52,7 @@ class ClassificationMetrics:
         Calculate the accuracy of predictions by comparing true and predicted labels.
 
         Returns:
-            float: Classification accuracy as a percentage (0.0 to 100.0).
+            Classification accuracy (0.0 to 1.0).
         """
         return np.mean(self.y_true == self.y_pred)
 
@@ -62,7 +61,7 @@ class ClassificationMetrics:
         Calculate precision for each class.
 
         Returns:
-            NDArray[np.float64]: Precision values for each class.
+            Precision values for each class.
         """
         cm, _ = self.confusion_matrix()
         return np.diag(cm) / (np.sum(cm, axis=0) + 1e-7)
@@ -72,7 +71,7 @@ class ClassificationMetrics:
         Calculate recall for each class.
 
         Returns:
-            NDArray[np.float64]: Recall values for each class.
+            Recall values for each class.
         """
         cm, _ = self.confusion_matrix()
         return np.diag(cm) / (np.sum(cm, axis=1) + 1e-7)
@@ -82,7 +81,7 @@ class ClassificationMetrics:
         Calculate F1-score for each class.
 
         Returns:
-            NDArray[np.float64]: F1-scores for each class.
+            F1-scores for each class.
         """
         prec = self.precision()
         rec = self.recall()
@@ -93,15 +92,15 @@ class ClassificationMetrics:
         Calculate evaluation metrics including accuracy, precision, recall, and F1-score for each class.
 
         Args:
-            class_names (List[str], optional): List of class names. Defaults to None.
+            class_names: List of class names. Defaults to None.
 
         Returns:
             Tuple:
-            - float: Overall accuracy.
-            - float: Average precision.
-            - float: Average recall.
-            - float: Average F1-score.
-            - NDArray[np.int64]: Confusion matrix.
+            - Overall accuracy.
+            - Average precision.
+            - Average recall.
+            - Average F1-score.
+            - Confusion matrix.
         """
         cm, class_names = self.confusion_matrix(class_names)
         acc = self.accuracy()

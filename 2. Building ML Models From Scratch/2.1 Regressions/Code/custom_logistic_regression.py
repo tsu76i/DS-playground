@@ -11,15 +11,15 @@ class CustomLogisticRegression:
     """
 
     def __init__(self, W: NDArray[np.float64], alpha: float = 0.01,
-                 epochs: int = 5000, threshold: float = 0.5):
+                 epochs: int = 5000, threshold: float = 0.5) -> None:
         """
         Initialise the model with weights given hyperparameters.
 
         Args:
-        W (NDArray[np.float64]): Initial weights, including bias term.
-        alpha (float): Learning rate. Default is 0.01
-        epochs (int): Number of iterations for gradient descent. Default is 5000.
-        threshold (float): Classification threshold for predicting labels. Default is 0.5.
+        W: Initial weights, including bias term.
+        alpha: Learning rate. Default is 0.01
+        epochs: Number of iterations for gradient descent. Default is 5000.
+        threshold: Classification threshold for predicting labels. Default is 0.5.
         """
         self.W = W
         self.alpha = alpha
@@ -32,10 +32,10 @@ class CustomLogisticRegression:
         Compute the sigmoid function.
 
         Args:
-            z (NDArray[np.float64]): Input array, a linear combination of X(features) and W(weights).
+            z: Input array, a linear combination of X(features) and W(weights).
 
         Returns:
-            NDArray[np.float64]: Output after applying the sigmoid function.
+            Output after applying the sigmoid function.
         """
         return 1 / (1 + np.exp(-z))
 
@@ -44,10 +44,10 @@ class CustomLogisticRegression:
         Compute the hypothesis function for logistic regression.
 
         Args:
-            X (NDArray[np.float64]): Feature matrix.
+            X: Feature matrix.
 
         Returns:
-            NDArray[np.float64]: Predicted probabilities.
+            Predicted probabilities.
         """
         return self.sigmoid(np.dot(X, self.W))
 
@@ -56,11 +56,11 @@ class CustomLogisticRegression:
         Calculate the Binary Cross-Entropy (BCE) loss.
 
         Args:
-            y (NDArray[np.int64]): True labels.
-            y_pred (NDArray[np.float64]): Predicted probabilities.
+            y: True labels.
+            y_pred: Predicted probabilities.
 
         Returns:
-            float: BCE loss.
+            BCE loss.
         """
         return - (1 / len(y)) * np.sum(y * np.log(y_pred) + (1 - y) * np.log(1 - y_pred))
 
@@ -69,8 +69,8 @@ class CustomLogisticRegression:
         Perform gradient descent to optimize weights.
 
         Args:
-            X (NDArray[np.float64]): Feature matrix.
-            y (NDArray[np.int64]): True labels.
+            X: Feature matrix.
+            y: True labels.
         """
         for epoch in tqdm(range(self.epochs)):
             y_pred: NDArray[np.float64] = self.hypothesis(X)
@@ -84,8 +84,8 @@ class CustomLogisticRegression:
         Train the model using gradient descent.
 
         Args:
-            X (NDArray[np.float64]): Feature matrix.
-            y (NDArray[np.int64]): True labels.
+            X: Feature matrix.
+            y: True labels.
         """
         self.gradient_descent(x, y)
         print(
@@ -96,11 +96,11 @@ class CustomLogisticRegression:
         Calculate the accuracy of the model.
 
         Args:
-            y_pred (NDArray[np.int64]): Predicted labels.
-            y (NDArray[np.int64]): True labels.
+            y_pred: Predicted labels.
+            y: True labels.
 
         Returns:
-            float: Accuracy percentage.
+            Accuracy percentage.
         """
         return np.mean(y == y_pred) * 100
 
@@ -109,10 +109,10 @@ class CustomLogisticRegression:
         Predict probabilities for the input data.
 
         Args:
-            X (NDArray[np.float64]): Feature matrix.
+            X: Feature matrix.
 
         Returns:
-            NDArray[np.float64]: Predicted probabilities.
+            Predicted probabilities.
         """
         return self.hypothesis(X)
 
@@ -121,10 +121,10 @@ class CustomLogisticRegression:
         Predict class labels based on the threshold.
 
         Args:
-            X (NDArray[np.float64]): Feature matrix.
+            X: Feature matrix.
 
         Returns:
-            NDArray[np.int64]: Predicted labels (0 or 1).
+            Predicted labels (0 or 1).
         """
         return (self.predict_proba(X) >= self.threshold).astype(int)
 
@@ -146,10 +146,10 @@ class CustomLogisticRegression:
         Visualise the decision boundary of the logistic regression model.
 
         Args:
-            x_1 (NDArray[np.float64]): Feature 1 values.
-            x_2 (NDArray[np.float64]): Feature 2 values.
-            y (NDArray[np.int64]): True labels.
-            sample_data (NDArray[np.float64], optional): A single sample for visualisation. Default is None.
+            x_1: Feature 1 values.
+            x_2: Feature 2 values.
+            y: True labels.
+            sample_data: A single sample for visualisation. Default is None.
         """
         decision_boundary = -(self.W[0] + self.W[1] * x_1) / self.W[2]
         plt.figure(figsize=(8, 6))

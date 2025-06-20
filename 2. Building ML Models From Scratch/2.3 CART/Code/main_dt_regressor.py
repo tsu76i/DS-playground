@@ -14,28 +14,28 @@ def main():
         X, y, test_size=0.3, random_state=42)
 
     # Train the decision tree
-    tree = CustomDecisionTreeRegressor(max_depth=3, metric="variance")
+    tree = CustomDecisionTreeRegressor(max_depth=3, metric='variance')
     tree.fit(X_train, y_train, feature_names=feature_names)
 
     # Predict and evaluate
     y_pred = tree.predict(X_test)
     metrics = RegressionMetrics(y_test, y_pred)
     mse_custom, rmse_custom, mae_custom, r2_custom = metrics.evaluate()
-    print(f"MSE (Custom): {mse_custom:.4f}")
-    print(f"RMSE (Custom): {rmse_custom:.4f}")
-    print(f"MAE (Custom): {mae_custom:.4f}")
-    print(f"R-Squared (Custom): {r2_custom:.4f}")
-    print("----------")
+    print(f'MSE (Custom): {mse_custom:.4f}')
+    print(f'RMSE (Custom): {rmse_custom:.4f}')
+    print(f'MAE (Custom): {mae_custom:.4f}')
+    print(f'R-Squared (Custom): {r2_custom:.4f}')
+    print('----------')
 
     # Single prediction
     sample = X_test.iloc[0]
     single_prediction = tree.predict(sample)
     print(
-        f"Predicted: {single_prediction:.4f}, Actual: {y_test.iloc[0]:.4f}")
-    print("----------")
+        f'Predicted: {single_prediction:.4f}, Actual: {y_test.iloc[0]:.4f}')
+    print('----------')
 
     # Print the tree structure
-    print("\nDecision Tree Structure:")
+    print('\nDecision Tree Structure:')
     tree.print_tree()
 
 

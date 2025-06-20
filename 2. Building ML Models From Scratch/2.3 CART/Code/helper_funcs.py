@@ -11,18 +11,17 @@ class HelperFuncs:
         Split arrays or matrices into random train and test subsets.
 
         Args:
-            X (pd.DataFrame): Input features, a 2D array with rows (samples) and columns (features).
-            y (pd.Series): Target values/labels, a 1D array with rows (samples).
-            test_size (float): Proportion of the dataset to include in the test split. Must be between 0.0 and 1.0. default = 0.2
-            random_state (int): Seed for the random number generator to ensure reproducible results. default = None
+            X: Input features, a 2D array with rows (samples) and columns (features).
+            y: Target values/labels, a 1D array with rows (samples).
+            test_size: Proportion of the dataset to include in the test split. Must be between 0.0 and 1.0. default = 0.2
+            random_state: Seed for the random number generator to ensure reproducible results. default = None
 
         Returns:
-            tuple[NDArray, NDArray, NDArray, NDArray]:
             A tuple containing:
-                - X_train (pd.DataFrame): Training set features.
-                - X_test (pd.DataFrame): Testing set features.
-                - y_train (pd.Series): Training set target values.
-                - y_test (pd.Series): Testing set target values.
+                - X_train: Training set features.
+                - X_test: Testing set features.
+                - y_train: Training set target values.
+                - y_test: Testing set target values.
         """
         # Set a random seed if it exists
         if random_state:

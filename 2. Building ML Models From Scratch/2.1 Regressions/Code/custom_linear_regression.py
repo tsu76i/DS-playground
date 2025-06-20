@@ -11,15 +11,15 @@ class CustomLinearRegression:
     """
 
     def __init__(self, w: float = 0.0, b: float = 0.0,
-                 alpha: float = 0.01, epochs: int = 5000):
+                 alpha: float = 0.01, epochs: int = 5000) -> None:
         """
         Initialise the CustomLinearRegression instance with given hyperparameters.
 
         Args:
-            w (float): Initial weight (default is 0.0).
-            b (float): Initial bias (default is 0.0).
-            alpha (float): Learning rate for gradient descent (default is 0.01).
-            epochs (int): Number of iterations for gradient descent (default is 5000).
+            w: Initial weight (default is 0.0).
+            b: Initial bias (default is 0.0).
+            alpha: Learning rate for gradient descent (default is 0.01).
+            epochs: Number of iterations for gradient descent (default is 5000).
         """
         self.w = w
         self.b = b
@@ -32,10 +32,10 @@ class CustomLinearRegression:
         Predict the output for a given input using the regression line.
 
         Args:
-            x (float): Input feature value.
+            x: Input feature value.
 
         Returns:
-            float: Predicted value.
+            Predicted value.
         """
         return self.w * x + self.b
 
@@ -44,11 +44,11 @@ class CustomLinearRegression:
         Calculate the Mean Squared Error (MSE) loss.
 
         Args:
-            y (NDArray[np.float64]): True output values.
-            y_pred (NDArray[np.float64]): Predicted output values.
+            y: True output values.
+            y_pred: Predicted output values.
 
         Returns:
-            float: Mean Squared Error.
+            Mean Squared Error.
         """
         return np.mean((y - y_pred) ** 2)
 
@@ -57,8 +57,8 @@ class CustomLinearRegression:
         Perform gradient descent to optimise the regression parameters.
 
         Args:
-            x (NDArray[np.float64]): Input feature values.
-            y (NDArray[np.float64]): True output values.
+            x: Input feature values.
+            y: True output values.
         """
         n: int = len(y)
         for _ in tqdm(range(self.epochs)):
@@ -78,8 +78,8 @@ class CustomLinearRegression:
         Train the model using gradient descent.
 
         Args:
-            x (NDArray[np.float64]): Input feature values.
-            y (NDArray[np.float64]): True output values.
+            x: Input feature values.
+            y: True output values.
         """
         self.gradient_descent(x, y)
         print(
@@ -103,10 +103,10 @@ class CustomLinearRegression:
         Plot the regression line, training data, and test data point.
 
         Args:
-            X (NDArray[np.float64]): Input feature values for training data.
-            y (NDArray[np.float64]): Target values for training data.
-            x_test (float): Test input value.
-            y_pred_single (float): Predicted output for the test input.
+            X: Input feature values for training data.
+            y: Target values for training data.
+            x_test: Test input value.
+            y_pred_single: Predicted output for the test input.
         """
         plt.figure(figsize=(8, 5))
         plt.scatter(X, y)

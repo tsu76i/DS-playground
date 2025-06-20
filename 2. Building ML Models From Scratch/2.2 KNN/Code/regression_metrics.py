@@ -14,8 +14,8 @@ class RegressionMetrics:
         Initialise the ClassificationMetrics instance.
 
         Args:
-            y_true (pd.Series): True labels of the dataset.
-            y_pred (NDArray[np.float64]): Predicted labels of the dataset.
+            y_true: True labels of the dataset.
+            y_pred: Predicted labels of the dataset.
         """
         self.y_true = y_true
         self.y_pred = y_pred
@@ -40,11 +40,10 @@ class RegressionMetrics:
         Calculate and return evaluation metrics for a regression model, including MSE, RMSE, MAE, and R-squared.
 
         Returns:
-            Tuple[float, float, float, float]:
-            - mse (float): Mean Squared Error (MSE), indicating the average of the squared differences between predicted and true values.
-            - rmse (float): Root Mean Squared Error (RMSE), indicating the standard deviation of the residuals.
-            - mae (float): Mean Absolute Error (MAE), representing the average absolute difference between predicted and true values.
-            - r2 (float): R-squared (coefficient of determination), showing the proportion of variance in the dependent variable that is predictable from the independent variable(s).
+            - mse: Mean Squared Error (MSE), indicating the average of the squared differences between predicted and true values.
+            - rmse: Root Mean Squared Error (RMSE), indicating the standard deviation of the residuals.
+            - mae: Mean Absolute Error (MAE), representing the average absolute difference between predicted and true values.
+            - r2: R-squared (coefficient of determination), showing the proportion of variance in the dependent variable that is predictable from the independent variable(s).
         """
         mse = self.calculate_MSE()
         rmse = self.calculate_RMSE()

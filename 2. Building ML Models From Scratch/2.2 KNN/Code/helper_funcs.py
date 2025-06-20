@@ -10,10 +10,10 @@ class HelperFuncs:
         Remove outliers from all numerical columns in the dataframe using the IQR method.
 
         Args:
-            df (pd.DataFrame): The input dataframe.
+            df: The input dataframe.
 
         Returns:
-            pd.DataFrame: DataFrame with outliers removed from all numerical columns.
+            DataFrame with outliers removed from all numerical columns.
         """
         numerical_columns = df.select_dtypes(
             include=['float64', 'int64']).columns
@@ -35,11 +35,11 @@ class HelperFuncs:
         Perform ordinal encoding for a categorical feature.
 
         Args:
-            data (NDArray[np.str_]): List of categorical values.
-            levels (NDArray[np.str_]): Ordered list of unique levels in the desired order.
+            data: List of categorical values.
+            levels: Ordered list of unique levels in the desired order.
 
         Returns:
-            NDArray[np.int64]: Ordinally encoded array.
+            Ordinally encoded array.
         """
         level_map = {level: i for i, level in enumerate(levels)}
         return np.array([level_map[val] for val in data])
@@ -49,10 +49,10 @@ class HelperFuncs:
         Standardise the dataset.
 
         Args:
-            data (NDArray[np.float64]): A 2D NumPy array where each column is a feature.
+            data: A 2D NumPy array where each column is a feature.
 
         Returns:
-            NDArray[np.float64]: Standardised dataset with mean 0 and variance 1.
+            Standardised dataset with mean 0 and variance 1.
         """
         data_mean = np.mean(data, axis=0)
         data_std = np.std(data, axis=0)
@@ -63,10 +63,10 @@ class HelperFuncs:
         Normalise the dataset to range [0, 1].
 
         Args:
-            data (NDArray[np.float64]): A 2D NumPy array where each column is a feature.
+            data: A 2D NumPy array where each column is a feature.
 
         Returns:
-            NDArray[np.float64]: Normalised dataset.
+            Normalised dataset.
         """
         min_val = np.min(data, axis=0)
         max_val = np.max(data, axis=0)
@@ -78,18 +78,17 @@ class HelperFuncs:
         Split arrays or matrices into random train and test subsets.
 
         Args:
-            X (pd.DataFrame): Input features, a 2D array with rows (samples) and columns (features).
-            y (pd.Series): Target values/labels, a 1D array with rows (samples).
-            test_size (float): Proportion of the dataset to include in the test split. Must be between 0.0 and 1.0. default = 0.2
-            random_state (int): Seed for the random number generator to ensure reproducible results. default = None
+            X: Input features, a 2D array with rows (samples) and columns (features).
+            y: Target values/labels, a 1D array with rows (samples).
+            test_size: Proportion of the dataset to include in the test split. Must be between 0.0 and 1.0. default = 0.2
+            random_state: Seed for the random number generator to ensure reproducible results. default = None
 
         Returns:
-            tuple[NDArray, NDArray, NDArray, NDArray]:
             A tuple containing:
-                - X_train (pd.DataFrame): Training set features.
-                - X_test (pd.DataFrame): Testing set features.
-                - y_train (pd.Series): Training set target values.
-                - y_test (pd.Series): Testing set target values.
+                - X_train: Training set features.
+                - X_test: Testing set features.
+                - y_train: Training set target values.
+                - y_test: Testing set target values.
         """
         # Set a random seed if it exists
         if random_state:

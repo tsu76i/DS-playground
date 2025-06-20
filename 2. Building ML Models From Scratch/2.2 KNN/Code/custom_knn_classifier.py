@@ -15,7 +15,7 @@ class CustomKNNClassifier:
         Initialise the model with k, the number of neighbours.
 
         Args: 
-            k (int): The number of nearest neighbours to consider for classification. default = 3.
+            k: The number of nearest neighbours to consider for classification. default = 3.
         """
         self.k = k
 
@@ -24,8 +24,8 @@ class CustomKNNClassifier:
         Fit the training data.
 
         Args:
-            X_train (pd.DataFrame): Training features, pd.DataFrame with rows (samples) and columns (features).
-            y_train (pd.Series): Training labels, pd.Series of labels corresponding to X_train.
+            X_train: Training features, pd.DataFrame with rows (samples) and columns (features).
+            y_train: Training labels, pd.Series of labels corresponding to X_train.
         """
         self.X_train = X_train.values
         self.y_train = y_train.values
@@ -35,11 +35,10 @@ class CustomKNNClassifier:
         Determines the most frequent label in an array of labels.
 
         Args:
-            labels_row (NDArray[np.str_ | np.int64]): A 1D array containing the labels 
-                                                    of the k nearest neighbours.
+            labels_row: A 1D array containing the labels of the k nearest neighbours.
 
         Returns:
-            str: The most frequent label in the input array.
+            The most frequent label in the input array.
         """
         unique_labels, counts = np.unique(labels_row, return_counts=True)
         return unique_labels[np.argmax(counts)]  # Most frequent labels
@@ -50,18 +49,16 @@ class CustomKNNClassifier:
         Predicts the labels for the given test data.
 
         Args:
-            X_test (pd.DataFrame): Test features, either a single sample (1D array) 
-                                        or multiple samples (2D array).
+            Test features, either a single sample (1D array) or multiple samples (2D array).
 
         Returns:
             If X_test is a single sample (1D array):
-                Tuple[str, NDArray[np.int64], NDArray[np.str_]]: 
                 - The most frequent label among k nearest neighbours.
                 - Indices of the k nearest neighbours.
                 - Labels of the k nearest neighbours.
 
             If X_test is multiple samples (2D array):
-                NDArray[np.str_]: Predicted labels for all test samples.
+                Predicted labels for all test samples.
         """
         is_single_sample = X_test.ndim == 1
 

@@ -10,18 +10,25 @@ class CustomDecisionTreeClassifier:
     A class representing a decision tree classifier.
 
     Args:
-        max_depth (int or None): Maximum depth of the tree. None for unlimited depth.
-        metric (str): Splitting criterion, either 'gini' or 'entropy'.
+        max_depth: Maximum depth of the tree. None for unlimited depth.
+        metric: Splitting criterion, either 'gini' or 'entropy'.
 
     Attributes:
-        max_depth (int or None): Maximum depth of the tree.
-        metric (str): Splitting criterion.
-        root (Node or None): Root node of the decision tree, initialised as None.
-        feature_names (list[str] or None): Names of the features, set during fitting.
-        class_names (List[str] or None): Names of the classes, set during fitting.
+        max_depth: Maximum depth of the tree.
+        metric: Splitting criterion.
+        root: Root node of the decision tree, initialised as None.
+        feature_names: Names of the features, set during fitting.
+        class_names: Names of the classes, set during fitting.
     """
 
-    def __init__(self, max_depth: int = None, metric: str = 'gini'):
+    def __init__(self, max_depth: int = None, metric: str = 'gini') -> None:
+        """
+        Initialises the dCustomDecisionTreeClassifier instance.
+
+        Args:
+            max_depth: Maximum depth of the tree. None indicates unlimited depth.
+            metric: Splitting criterion, either 'gini' or 'entropy'.
+        """
         self.max_depth = max_depth
         self.metric = metric
         self.root = None
@@ -33,10 +40,10 @@ class CustomDecisionTreeClassifier:
         Calculate the Gini impurity.
 
         Args:
-            y (pd.Series): Series of labels.
+            y: Series of labels.
 
         Returns:
-            float: Gini impurity.
+            Gini impurity.
         """
         if len(y) == 0:
             return 0
@@ -48,10 +55,10 @@ class CustomDecisionTreeClassifier:
         Calculate the entropy.
 
         Args:
-            y (NDArray[np.int64]): Series of labels.
+            y: Series of labels.
 
         Returns:
-            float: Entropy value.
+            Entropy value.
         """
         if len(y) == 0:
             return 0
@@ -64,12 +71,12 @@ class CustomDecisionTreeClassifier:
         Compute the information gain of a split.
 
         Args:
-            y (pd.Series): Series of the parent node.
-            y_left (pd.Series): Series of the left child node.
-            y_right (pd.Series): Series of the right child node.
+            y: Series of the parent node.
+            y_left: Series of the left child node.
+            y_right: Series of the right child node.
 
         Returns:
-            float: Information gain from the split.
+            Information gain from the split.
         """
         if self.metric == "gini":
             parent_metric = self.gini(y)
@@ -91,16 +98,16 @@ class CustomDecisionTreeClassifier:
         Find the best feature and threshold to split the dataset.
 
         Args:
-            X (pd.DataFrame): Input features.
-            y (pd.Series): Labels as int.
+            X: Input features.
+            y: Labels as int.
 
         Returns:
-            dict: Dictionary containing the best split with keys:
-              - 'feature_index' (int): Index of the feature used for the split.
-              - 'feature_name' (str/int): Name or index of the feature.
-              - 'threshold' (float64): Threshold value for the split.
+            Dictionary containing the best split with keys:
+              - 'feature_index': Index of the feature used for the split.
+              - 'feature_name': Name or index of the feature.
+              - 'threshold': Threshold value for the split.
         """
-        best_info_gain = float("-inf")
+        best_info_gain = float('-inf')
         best_split: Dict = None
         n_features: int = X.shape[1]
 
@@ -125,8 +132,8 @@ class CustomDecisionTreeClassifier:
                 if info_gain > best_info_gain:
                     best_info_gain = info_gain
                     best_split = {
-                        "feature_index": feature,
-                        "threshold": threshold,
+                        'feature_index': feature,
+                        'threshold': threshold,
                     }
 
         return best_split
@@ -136,12 +143,12 @@ class CustomDecisionTreeClassifier:
         Build the decision tree recursively.
 
         Args:
-            X (pd.DataFrame): Input features.
-            y (pd.Series): Labels.
-            depth (int): Current depth of the tree.
+            X: Input features.
+            y: Labels.
+            depth: Current depth of the tree.
 
         Returns:
-            Node: Root node of the decision tree.
+            Root node of the decision tree.
         """
 
         # Convert DataFrames to NumPy arrays
@@ -152,18 +159,18 @@ class CustomDecisionTreeClassifier:
 
         # Stop recursion if all labels are identical or max depth is reached
         if len(set(y)) == 1 or (self.max_depth is not None and depth == self.max_depth):
-            return Node(type="leaf", value=np.argmax(np.bincount(y)))
+            return Node(type='leaf', value=np.argmax(np.bincount(y)))
 
         # Find the best split
         split: Dict = self.best_split(X, y)
         if not split:
-            return Node(type="leaf", value=np.argmax(np.bincount(y)))
+            return Node(type='leaf', value=np.argmax(np.bincount(y)))
 
         # Split the data
         left_mask: NDArray[np.bool] = X[:,
-                                        split["feature_index"]] <= split["threshold"]
+                                        split['feature_index']] <= split['threshold']
         right_mask: NDArray[np.bool] = X[:,
-                                         split["feature_index"]] > split["threshold"]
+                                         split['feature_index']] > split['threshold']
 
         # Recursively build the left and right subtrees
         left_tree: Node = self.build_tree(
@@ -172,9 +179,9 @@ class CustomDecisionTreeClassifier:
             X[right_mask], y[right_mask], depth + 1)
 
         # Store the feature index directly for easier traversal
-        feature_index: int = split["feature_index"]
+        feature_index: int = split['feature_index']
 
-        return Node(type="node", feature=feature_index, threshold=split["threshold"], left=left_tree, right=right_tree)
+        return Node(type='node', feature=feature_index, threshold=split['threshold'], left=left_tree, right=right_tree)
 
     def fit(self, X: pd.DataFrame, y: pd.Series,
             class_names: NDArray[np.str_], feature_names: NDArray[np.str_] = None) -> None:
@@ -182,10 +189,10 @@ class CustomDecisionTreeClassifier:
         Fit the decision tree model to the given data.
 
         Args:
-            X (pd.DataFrame): Input features.
-            y (pd.Series): Labels.
-            class_names (NDArray[np.str_]): Names of the labels.
-            feature_names (NDArray[np.str_], optional): Names of the features. Defaults to None.
+            X: Input features.
+            y: Labels.
+            class_names: Names of the labels.
+            feature_names: Names of the features. Defaults to None.
         """
         self.feature_names = feature_names
         self.class_names = class_names
@@ -196,13 +203,13 @@ class CustomDecisionTreeClassifier:
         Traverse the decision tree to make a prediction for a single sample.
 
         Args:
-            x (pd.DataFrame): Single sample.
-            node (Node): Current node.
+            x: Single sample.
+            node: Current node.
 
         Returns:
-            int: Predicted label.
+            Predicted label.
         """
-        if node.type == "leaf":
+        if node.type == 'leaf':
             return node.value
 
         # node.feature = feature index
@@ -217,10 +224,10 @@ class CustomDecisionTreeClassifier:
         Predict labels for the given dataset.
 
         Args:
-            X (pd.DataFrame): Input features.
+            X: Input features.
 
         Returns:
-            int or NDArray[np.int64]: Predicted label(s).
+            Predicted label(s).
         """
         # Convert DataFrames to NumPy arrays
         if hasattr(X, 'to_numpy'):
@@ -230,27 +237,27 @@ class CustomDecisionTreeClassifier:
             return self.traverse_tree(X, self.root)
         return np.array([self.traverse_tree(x, self.root) for x in X])
 
-    def print_tree(self, node: Node = None, depth: int = 0, prefix: str = "Root: ") -> None:
+    def print_tree(self, node: Node = None, depth: int = 0, prefix: str = 'Root: ') -> None:
         """
         Print the tree structure in a readable format.
 
         Args:
-            node (Node, optional): Current node. Defaults to the root node.
-            depth (int, optional): Current depth. Defaults to 0.
-            prefix (str, optional): Prefix for the current node. Defaults to "Root: ".
+            node: Current node. Defaults to the root node.
+            depth: Current depth. Defaults to 0.
+            prefix: Prefix for the current node. Defaults to 'Root: '.
         """
         if node is None:
             node = self.root
 
-        if node.type == "leaf":
-            print("  " * depth + prefix +
-                  f"Predict -> {self.class_names[node.value]}")
+        if node.type == 'leaf':
+            print('  ' * depth + prefix +
+                  f'Predict -> {self.class_names[node.value]}')
         else:
             feature_name = self.feature_names[
-                node.feature] if self.feature_names is not None else f"Feature_{node.feature}"
-            print("  " * depth + prefix +
-                  f"{feature_name} <= {node.threshold:.4f}")
+                node.feature] if self.feature_names is not None else f'Feature_{node.feature}'
+            print('  ' * depth + prefix +
+                  f'{feature_name} <= {node.threshold:.4f}')
             if node.left:
-                self.print_tree(node.left, depth + 1, "├─ True: ")
+                self.print_tree(node.left, depth + 1, '├─ True: ')
             if node.right:
-                self.print_tree(node.right, depth + 1, "└─ False: ")
+                self.print_tree(node.right, depth + 1, '└─ False: ')

@@ -22,29 +22,29 @@ def main():
 
     # Existing datasets
     datasets = {
-        "Blobs": (X_linear, y_linear),
-        "Moons": (X_moons, y_moons),
-        "Circles": (X_circles, y_circles)
+        'Blobs': (X_linear, y_linear),
+        'Moons': (X_moons, y_moons),
+        'Circles': (X_circles, y_circles)
     }
 
     # Kernel settings
     kernel_settings = {
-        "linear": {},
-        "poly": {"degree": 3, "coef0": 1},
-        "rbf": {"gamma": 1.0}
+        'linear': {},
+        'poly': {'degree': 3, 'coef0': 1},
+        'rbf': {'gamma': 1.0}
     }
 
     for name, (X, y) in datasets.items():
         X_train, X_test, y_train, y_test = HelperFuncs.train_test_split(
             X, y, test_size=0.2, random_state=42)
-        print(f"\n=== Dataset: {name} ===")
+        print(f'\n=== Dataset: {name} ===')
         for kernel_name, params in kernel_settings.items():
             model = CustomSVM(kernel=kernel_name, **params)
             model.fit(X_train, y_train)
             y_pred = model.predict(X_test)
             accuracy = model.accuracy(y_test, y_pred)
             print(
-                f"{kernel_name.capitalize()} Kernel -> Test Accuracy: {accuracy:.2%}")
+                f'{kernel_name.capitalize()} Kernel -> Test Accuracy: {accuracy:.2%}')
 
 
 if __name__ == '__main__':
