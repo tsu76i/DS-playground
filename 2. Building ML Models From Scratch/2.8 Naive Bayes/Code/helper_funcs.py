@@ -42,3 +42,15 @@ class HelperFuncs:
 
         # Return: X_train, X_test, y_train, y_test
         return X.iloc[train_indices], X.iloc[test_indices], y.iloc[train_indices], y.iloc[test_indices]
+
+    def clean_text(text: str) -> str:
+        """
+        Clean and preprocess email text for spam detection.
+
+        Args:
+            Raw email text.
+
+        Returns:
+            Cleaned and preprocessed text.
+        """
+        return text.lower()
