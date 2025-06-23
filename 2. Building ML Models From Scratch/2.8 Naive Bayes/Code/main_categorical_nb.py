@@ -5,8 +5,8 @@ from classification_metrics import ClassificationMetrics
 
 def main():
     df = pd.read_csv(
-        '2. Building ML Models From Scratch/_datasets/weather_forecast.csv')
-    X, y = df.drop('Play', axis=1), df['Play']
+        '2. Building ML Models From Scratch/_datasets/material.csv', index_col=0)
+    X, y = df.drop('demand', axis=1), df['demand']
 
     model = CustomCategoricalNB()
     model.fit(X, y)
