@@ -1,11 +1,6 @@
 from sklearn.datasets import make_blobs
-import matplotlib.pyplot as plt
 import pandas as pd
-import numpy as np
-from numpy.typing import NDArray
 from sklearn.preprocessing import MinMaxScaler
-from tqdm import tqdm
-from typing import List, Tuple, Dict
 from helper_funcs import HelperFuncs
 from custom_dbscan import CustomDBSCAN
 from dbscan_metrics import DBSCANMetrics

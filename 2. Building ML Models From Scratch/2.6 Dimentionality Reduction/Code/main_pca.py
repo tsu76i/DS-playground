@@ -1,7 +1,4 @@
-import numpy as np
-import matplotlib.pyplot as plt
 from sklearn.datasets import load_wine
-from numpy.typing import NDArray
 from helper_funcs import HelperFuncs
 from custom_pca import CustomPCA
 
