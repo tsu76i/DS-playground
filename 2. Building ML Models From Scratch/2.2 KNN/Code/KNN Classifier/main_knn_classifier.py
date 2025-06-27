@@ -1,7 +1,7 @@
-import pandas as pd
-from classification_metrics import ClassificationMetrics
-from helper_funcs import HelperFuncs
 from custom_knn_classifier import CustomKNNClassifier
+from classification_metrics import ClassificationMetrics
+import pandas as pd
+from helper_funcs import HelperFuncs
 
 
 def main():
