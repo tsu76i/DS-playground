@@ -47,7 +47,7 @@ class ClassificationMetrics:
 
         return matrix, class_names
 
-    def accuracy(self):
+    def accuracy(self) -> NDArray[np.float64]:
         """
         Calculate the accuracy of predictions by comparing true and predicted labels.
 
@@ -56,7 +56,7 @@ class ClassificationMetrics:
         """
         return np.mean(self.y_true == self.y_pred)
 
-    def precision(self):
+    def precision(self) -> NDArray[np.float64]:
         """
         Calculate precision for each class.
 
@@ -66,7 +66,7 @@ class ClassificationMetrics:
         cm, _ = self.confusion_matrix()
         return np.diag(cm) / (np.sum(cm, axis=0) + 1e-7)
 
-    def recall(self):
+    def recall(self) -> NDArray[np.float64]:
         """
         Calculate recall for each class.
 
@@ -76,7 +76,7 @@ class ClassificationMetrics:
         cm, _ = self.confusion_matrix()
         return np.diag(cm) / (np.sum(cm, axis=1) + 1e-7)
 
-    def f1_score(self):
+    def f1_score(self) -> NDArray[np.float64]:
         """
         Calculate F1-score for each class.
 
@@ -87,7 +87,7 @@ class ClassificationMetrics:
         rec = self.recall()
         return 2 * (prec * rec) / (prec + rec + 1e-7)
 
-    def evaluate(self, class_names: List[str] = None) -> Tuple[float, float, float, float, NDArray[np.int64]]:
+    def evaluate(self, class_names: List[str] = None) -> Tuple[np.float64, np.float64, np.float64, np.float64, NDArray[np.int64]]:
         """
         Calculate evaluation metrics including accuracy, precision, recall, and F1-score for each class.
 

@@ -9,7 +9,7 @@ class ClassificationMetrics:
     A class to compute and evaluate classification metrics (accuracy, precision, recall, and F1-score).
     """
 
-    def __init__(self, y_true: pd.Series, y_pred: NDArray[np.str_]) -> None:
+    def __init__(self, y_true: NDArray[np.float64], y_pred: NDArray[np.int8]) -> None:
         """
         Initialise the ClassificationMetrics instance.
 
