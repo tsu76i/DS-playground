@@ -9,7 +9,7 @@ class RegressionMetrics:
     A class to compute and evaluate regression metrics (MSE, RMSE, MAE, and R-Squared).
     """
 
-    def __init__(self, y_true: pd.Series, y_pred: NDArray[np.float64]):
+    def __init__(self, y_true: NDArray[np.float64], y_pred: NDArray[np.float64]):
         """
         Initialise the RegressionMetrics instance.
 

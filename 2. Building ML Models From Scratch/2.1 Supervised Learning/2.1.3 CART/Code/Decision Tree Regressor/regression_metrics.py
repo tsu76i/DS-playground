@@ -11,11 +11,11 @@ class RegressionMetrics:
 
     def __init__(self, y_true: pd.Series, y_pred: NDArray[np.float64]):
         """
-        Initialise the ClassificationMetrics instance.
+        Initialise the RegressionMetrics instance.
 
         Args:
-            y_true: True labels of the dataset.
-            y_pred: Predicted labels of the dataset.
+            y_true: True values of the dataset.
+            y_pred: Predicted values of the dataset.
         """
         self.y_true = y_true
         self.y_pred = y_pred

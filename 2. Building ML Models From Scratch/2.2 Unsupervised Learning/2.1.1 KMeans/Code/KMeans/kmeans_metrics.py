@@ -7,7 +7,7 @@ HistoryType = List[Dict[str, NDArray[np.float64] | NDArray[np.int64]]]
 class KMeansMetrics:
     def __init__(self, X: NDArray[np.float64], labels: NDArray[np.int64], centroids: NDArray[np.float64]) -> None:
         """
-        Initialise the ClassificationMetrics instance.
+        Initialise the KMeansMetrics instance.
 
         Args:
             X: Data points, shape (n_samples, n_features).
