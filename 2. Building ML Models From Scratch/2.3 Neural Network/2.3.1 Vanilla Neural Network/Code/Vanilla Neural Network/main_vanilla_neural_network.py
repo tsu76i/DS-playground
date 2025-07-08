@@ -14,11 +14,12 @@ def main():
     # Test predictions
     print("\nFinal Predictions:")
     for i in range(len(X)):
-        probability = round(nn.forward(X[i:i+1]).item(), 4)
+        probability = round(nn.forward(X[i : i + 1]).item(), 4)
         output = 0 if probability <= 0.5 else 1
         print(
-            f"Input: {X[i]} -> Output: {output} (Probability: {probability}) | Expected: {y[i][0]}")
+            f"Input: {X[i]} -> Output: {output} (Probability: {probability}) | Expected: {y[i][0]}"
+        )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

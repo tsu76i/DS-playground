@@ -18,8 +18,13 @@ class CustomDecisionTreeRegressor:
         min_samples_split: Minimum number of samples required to split a node.
     """
 
-    def __init__(self, max_depth: int = None, metric: str = 'variance',
-                 min_variance: float = 1e-7, min_sample_split: int = 2) -> None:
+    def __init__(
+        self,
+        max_depth: int = None,
+        metric: str = "variance",
+        min_variance: float = 1e-7,
+        min_sample_split: int = 2,
+    ) -> None:
         """
         Initialise the CustomDecisionTreeRegressor instance.
 
@@ -60,7 +65,9 @@ class CustomDecisionTreeRegressor:
         """
         return np.mean((y - np.mean(y)) ** 2) if len(y) > 0 else 0
 
-    def information_gain(self, y: pd.Series, y_left: pd.Series, y_right: pd.Series) -> float:
+    def information_gain(
+        self, y: pd.Series, y_left: pd.Series, y_right: pd.Series
+    ) -> float:
         """
         Compute the information gain of a split.
 
@@ -72,7 +79,7 @@ class CustomDecisionTreeRegressor:
         Returns:
             float: Information gain from the split.
         """
-        if self.metric == 'variance':
+        if self.metric == "variance":
             parent_metric = self.variance(y)
             left_metric = self.variance(y_left)
             right_metric = self.variance(y_right)
@@ -82,8 +89,7 @@ class CustomDecisionTreeRegressor:
             right_metric = self.mse(y_right)
 
         weighted_metric = (
-            len(y_left) / len(y) * left_metric
-            + len(y_right) / len(y) * right_metric
+            len(y_left) / len(y) * left_metric + len(y_right) / len(y) * right_metric
         )
         return parent_metric - weighted_metric
 
@@ -111,14 +117,13 @@ class CustomDecisionTreeRegressor:
                 if sum(left_mask) == 0 or sum(right_mask) == 0:
                     continue
 
-                info_gain: float = self.information_gain(
-                    y, y[left_mask], y[right_mask])
+                info_gain: float = self.information_gain(y, y[left_mask], y[right_mask])
 
                 if info_gain > best_info_gain:
                     best_info_gain = info_gain
                     best_split = {
-                        'feature_index': feature,
-                        'threshold': threshold,
+                        "feature_index": feature,
+                        "threshold": threshold,
                     }
 
         return best_split
@@ -137,39 +142,43 @@ class CustomDecisionTreeRegressor:
         """
 
         # Convert DataFrames to NumPy arrays
-        if hasattr(X, 'to_numpy'):
+        if hasattr(X, "to_numpy"):
             X = X.to_numpy()
-        if hasattr(y, 'to_numpy'):
+        if hasattr(y, "to_numpy"):
             y = y.to_numpy().flatten()  # Ensure 1D array
 
         if (
-            len(y) < self.min_sample_split or
-            (self.max_depth is not None and depth == self.max_depth) or
-            np.var(y) <= self.min_variance
+            len(y) < self.min_sample_split
+            or (self.max_depth is not None and depth == self.max_depth)
+            or np.var(y) <= self.min_variance
         ):
-            return Node(type='leaf', value=round(float(np.mean(y)), 4))
+            return Node(type="leaf", value=round(float(np.mean(y)), 4))
 
         split = self.best_split(X, y)
         if not split:
-            return Node(type='leaf', value=round(float(np.mean(y)), 4))
+            return Node(type="leaf", value=round(float(np.mean(y)), 4))
 
         # Split the data
-        left_mask: NDArray[np.bool] = X[:,
-                                        split['feature_index']] <= split['threshold']
-        right_mask: NDArray[np.bool] = X[:,
-                                         split['feature_index']] > split['threshold']
+        left_mask: NDArray[np.bool] = X[:, split["feature_index"]] <= split["threshold"]
+        right_mask: NDArray[np.bool] = X[:, split["feature_index"]] > split["threshold"]
 
         # Recursively build the left and right subtrees
-        left_tree: Node = self.build_tree(
-            X[left_mask], y[left_mask], depth + 1)
-        right_tree: Node = self.build_tree(
-            X[right_mask], y[right_mask], depth + 1)
+        left_tree: Node = self.build_tree(X[left_mask], y[left_mask], depth + 1)
+        right_tree: Node = self.build_tree(X[right_mask], y[right_mask], depth + 1)
 
         # Store the feature index directly for easier traversal
-        feature_index: int = split['feature_index']
-        return Node(type='node', feature=feature_index, threshold=split['threshold'], left=left_tree, right=right_tree)
+        feature_index: int = split["feature_index"]
+        return Node(
+            type="node",
+            feature=feature_index,
+            threshold=split["threshold"],
+            left=left_tree,
+            right=right_tree,
+        )
 
-    def fit(self, X: pd.DataFrame, y: pd.Series, feature_names: NDArray[np.str_] = None) -> None:
+    def fit(
+        self, X: pd.DataFrame, y: pd.Series, feature_names: NDArray[np.str_] = None
+    ) -> None:
         """
         Fit the decision tree regressor to the given data.
 
@@ -192,7 +201,7 @@ class CustomDecisionTreeRegressor:
         Returns:
             Predicted value.
         """
-        if node.type == 'leaf':
+        if node.type == "leaf":
             return node.value
 
         feature_index = node.feature
@@ -212,14 +221,16 @@ class CustomDecisionTreeRegressor:
             Predicted value(s).
         """
         # Convert DataFrames to NumPy arrays
-        if hasattr(X, 'to_numpy'):
+        if hasattr(X, "to_numpy"):
             X = X.to_numpy()
 
         if len(X.shape) == 1:
             return self.traverse_tree(X, self.root)
         return np.array([self.traverse_tree(x, self.root) for x in X])
 
-    def print_tree(self, node: Node = None, depth: int = 0, prefix: str = 'Root: ') -> None:
+    def print_tree(
+        self, node: Node = None, depth: int = 0, prefix: str = "Root: "
+    ) -> None:
         """
         Print the tree structure in a readable format.
 
@@ -231,12 +242,14 @@ class CustomDecisionTreeRegressor:
         if node is None:
             node = self.root
 
-        if node.type == 'leaf':
-            print('  ' * depth + prefix + f'Predict -> {node.value:.4f}')
+        if node.type == "leaf":
+            print("  " * depth + prefix + f"Predict -> {node.value:.4f}")
         else:
-            feature_name = self.feature_names[node.feature
-                                              ] if self.feature_names is not None else f'Feature_{node.feature}'
-            print('  ' * depth + prefix +
-                  f'{feature_name} <= {node.threshold:.4f}')
-            self.print_tree(node.left, depth + 1, '├─ True: ')
-            self.print_tree(node.right, depth + 1, '└─ False: ')
+            feature_name = (
+                self.feature_names[node.feature]
+                if self.feature_names is not None
+                else f"Feature_{node.feature}"
+            )
+            print("  " * depth + prefix + f"{feature_name} <= {node.threshold:.4f}")
+            self.print_tree(node.left, depth + 1, "├─ True: ")
+            self.print_tree(node.right, depth + 1, "└─ False: ")

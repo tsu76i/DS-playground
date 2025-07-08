@@ -38,13 +38,18 @@ class CustomDBSCAN:
         Returns:
             Indices of neighbours within epsilon distance.
         """
-        distances = np.linalg.norm(
-            data - data[point_idx], axis=1)  # Vectorised
+        distances = np.linalg.norm(data - data[point_idx], axis=1)  # Vectorised
         # Get indices where distance <= epsilon
         return np.where(distances <= self.epsilon)[0].tolist()
 
-    def _expand_cluster(self, data: NDArray[np.float64], labels: NDArray[np.int16],
-                        point_idx: int, neighbours: List[int], cluster_id: int) -> None:
+    def _expand_cluster(
+        self,
+        data: NDArray[np.float64],
+        labels: NDArray[np.int16],
+        point_idx: int,
+        neighbours: List[int],
+        cluster_id: int,
+    ) -> None:
         """
         Expand the cluster from a core point using density reachability.
 
@@ -84,7 +89,7 @@ class CustomDBSCAN:
         labels = np.zeros(n, dtype=int)  # Initialise with all 0s.
         cluster_id = 0
 
-        for i in tqdm(range(n), desc='Clustering'):
+        for i in tqdm(range(n), desc="Clustering"):
             if labels[i] != 0:  # Skip if already processed
                 continue
 
@@ -94,7 +99,6 @@ class CustomDBSCAN:
                 labels[i] = -1  # Mark as noise
             else:
                 cluster_id += 1  # New cluster
-                self._expand_cluster(data_np, labels, i,
-                                     neighbours, cluster_id)
+                self._expand_cluster(data_np, labels, i, neighbours, cluster_id)
         self.labels_ = labels
         return labels

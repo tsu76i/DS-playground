@@ -11,8 +11,15 @@ class Node:
         right: Right child node. None for leaf nodes.
     """
 
-    def __init__(self, type: str, value: float = None,
-                 feature: int = None, threshold: float = None, left: 'Node' = None, right: 'Node' = None):
+    def __init__(
+        self,
+        type: str,
+        value: float = None,
+        feature: int = None,
+        threshold: float = None,
+        left: "Node" = None,
+        right: "Node" = None,
+    ):
         """
         Initialise a Node instance.
 

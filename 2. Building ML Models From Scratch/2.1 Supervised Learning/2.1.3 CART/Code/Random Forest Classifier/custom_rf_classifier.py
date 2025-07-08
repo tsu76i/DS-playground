@@ -7,8 +7,16 @@ from scipy.stats import mode
 
 
 class CustomRandomForestClassifier:
-    def __init__(self, n_estimators: int = 100, max_depth: int = 15, min_samples_leaf: int = 1, metric: str = 'gini',
-                 max_features: Optional[int] = None, random_state: Optional[int] = None, n_jobs: int = -1) -> None:
+    def __init__(
+        self,
+        n_estimators: int = 100,
+        max_depth: int = 15,
+        min_samples_leaf: int = 1,
+        metric: str = "gini",
+        max_features: Optional[int] = None,
+        random_state: Optional[int] = None,
+        n_jobs: int = -1,
+    ) -> None:
         self.n_estimators = n_estimators
         self.max_depth = max_depth
         self.min_samples_leaf = min_samples_leaf
@@ -25,7 +33,7 @@ class CustomRandomForestClassifier:
         if len(y) == 0:
             return 0
         proportions = np.bincount(y) / len(y)
-        return 1 - np.sum(proportions ** 2)
+        return 1 - np.sum(proportions**2)
 
     def _entropy(self, y: pd.Series) -> float:
         """
@@ -37,7 +45,9 @@ class CustomRandomForestClassifier:
         proportions = proportions[proportions > 0]  # Avoid log(0)
         return -np.sum(proportions * np.log2(proportions))
 
-    def _information_gain(self, y: pd.Series, y_left: pd.Series, y_right: pd.Series) -> float:
+    def _information_gain(
+        self, y: pd.Series, y_left: pd.Series, y_right: pd.Series
+    ) -> float:
         """
         Compute the information gain of a split.
 
@@ -49,7 +59,7 @@ class CustomRandomForestClassifier:
         Returns:
             Information gain from the split.
         """
-        if self.metric == 'gini':
+        if self.metric == "gini":
             parent_metric = self._gini(y)
             left_metric = self._gini(y_left)
             right_metric = self._gini(y_right)
@@ -59,13 +69,17 @@ class CustomRandomForestClassifier:
             right_metric = self._entropy(y_right)
 
         weighted_metric: float = (
-            len(y_left) / len(y) * left_metric
-            + len(y_right) / len(y) * right_metric
+            len(y_left) / len(y) * left_metric + len(y_right) / len(y) * right_metric
         )
         return parent_metric - weighted_metric
 
-    def _bootstrap_sample(self, X: pd.DataFrame, y: pd.Series, n_samples: Optional[int] = None,
-                          random_state: Optional[int] = None) -> Tuple[pd.DataFrame, pd.Series]:
+    def _bootstrap_sample(
+        self,
+        X: pd.DataFrame,
+        y: pd.Series,
+        n_samples: Optional[int] = None,
+        random_state: Optional[int] = None,
+    ) -> Tuple[pd.DataFrame, pd.Series]:
         """
         Generate a bootstrap sample from the dataset.
 
@@ -81,10 +95,12 @@ class CustomRandomForestClassifier:
         rng = np.random.RandomState(random_state)
         if n_samples is None:
             n_samples = len(X)
-        indices = np.random.choice(len(X), size=n_samples, replace=True)
+        indices = rng.choice(len(X), size=n_samples, replace=True)
         return X.iloc[indices], y.iloc[indices]
 
-    def _best_split(self, X: NDArray[np.float64], y: NDArray[np.int16]) -> Dict[str, Any]:
+    def _best_split(
+        self, X: NDArray[np.float64], y: NDArray[np.int16]
+    ) -> Dict[str, Any]:
         """
         Find the best split for a dataset.
 
@@ -101,17 +117,22 @@ class CustomRandomForestClassifier:
                 - 'threshold' : Threshold value for the split.
         """
 
-        best_info_gain = float('-inf')
+        best_info_gain = float("-inf")
         best_split = None
         total_n_features = X.shape[1]
 
         if isinstance(self.max_features, int):  # if max_features is int
-            selected_n_features = self.max_features if self.max_features <= total_n_features else total_n_features
+            selected_n_features = (
+                self.max_features
+                if self.max_features <= total_n_features
+                else total_n_features
+            )
         else:  # Default = √total_n_features
             selected_n_features = int(np.sqrt(total_n_features))
 
         selected_features_idx = np.random.choice(
-            a=total_n_features, size=selected_n_features, replace=False)
+            a=total_n_features, size=selected_n_features, replace=False
+        )
 
         # Iterate over randomly selected features.
         for feature in selected_features_idx:
@@ -123,25 +144,31 @@ class CustomRandomForestClassifier:
                 right_mask = X[:, feature] > threshold
 
                 # Skip invalid splits.
-                if sum(left_mask) < self.min_samples_leaf or sum(right_mask) < self.min_samples_leaf:
+                if (
+                    sum(left_mask) < self.min_samples_leaf
+                    or sum(right_mask) < self.min_samples_leaf
+                ):
                     continue
 
                 # Compute IG.
-                info_gain = self._information_gain(
-                    y, y[left_mask], y[right_mask])
+                info_gain = self._information_gain(y, y[left_mask], y[right_mask])
 
                 # Update `best_info_gain` if `info_gain` > `best_info_gain`.
                 if info_gain > best_info_gain:
                     best_info_gain = info_gain
                     best_split = {
-                        'feature_index': int(feature),
-                        'feature_name': self.feature_names[feature] if self.feature_names is not None else feature,
-                        'threshold': float(threshold),
+                        "feature_index": int(feature),
+                        "feature_name": self.feature_names[feature]
+                        if self.feature_names is not None
+                        else feature,
+                        "threshold": float(threshold),
                     }
 
         return best_split
 
-    def _build_tree(self, X: pd.DataFrame, y: pd.Series, depth: int = 0) -> Dict[str, Any]:
+    def _build_tree(
+        self, X: pd.DataFrame, y: pd.Series, depth: int = 0
+    ) -> Dict[str, Any]:
         """
         Recursively build a decision tree.
 
@@ -155,45 +182,48 @@ class CustomRandomForestClassifier:
         """
 
         # Convert to numpy arrays
-        X_np = X.to_numpy() if hasattr(X, 'to_numpy') else np.array(X)
-        y_np = y.to_numpy().flatten() if hasattr(
-            y, 'to_numpy') else np.array(y).flatten()
+        X_np = X.to_numpy() if hasattr(X, "to_numpy") else np.array(X)
+        y_np = (
+            y.to_numpy().flatten() if hasattr(y, "to_numpy") else np.array(y).flatten()
+        )
 
         # Stopping conditions
-        if len(np.unique(y_np)) == 1 or (self.max_depth is not None and depth == self.max_depth):
-            return {'type': 'leaf', 'value': int(np.argmax(np.bincount(y_np)))}
+        if len(np.unique(y_np)) == 1 or (
+            self.max_depth is not None and depth == self.max_depth
+        ):
+            return {"type": "leaf", "value": int(np.argmax(np.bincount(y_np)))}
 
         if len(y) < self.min_samples_leaf:
-            return {'type': 'leaf', 'value': int(np.argmax(np.bincount(y_np)))}
+            return {"type": "leaf", "value": int(np.argmax(np.bincount(y_np)))}
 
         # Find best split
         split = self._best_split(X_np, y_np)
         if not split:
-            return {'type': 'leaf', 'value': int(np.argmax(np.bincount(y_np)))}
+            return {"type": "leaf", "value": int(np.argmax(np.bincount(y_np)))}
 
         # Apply split
-        feature_idx = split['feature_index']
-        left_mask = X_np[:, feature_idx] <= split['threshold']
-        right_mask = X_np[:, feature_idx] > split['threshold']
+        feature_idx = split["feature_index"]
+        left_mask = X_np[:, feature_idx] <= split["threshold"]
+        right_mask = X_np[:, feature_idx] > split["threshold"]
 
         # Recursive tree building
         left_tree = self._build_tree(
-            X.iloc[left_mask] if hasattr(X, 'iloc') else X[left_mask],
-            y.iloc[left_mask] if hasattr(y, 'iloc') else y[left_mask],
-            depth + 1
+            X.iloc[left_mask] if hasattr(X, "iloc") else X[left_mask],
+            y.iloc[left_mask] if hasattr(y, "iloc") else y[left_mask],
+            depth + 1,
         )
         right_tree = self._build_tree(
-            X.iloc[right_mask] if hasattr(X, 'iloc') else X[right_mask],
-            y.iloc[right_mask] if hasattr(y, 'iloc') else y[right_mask],
-            depth + 1
+            X.iloc[right_mask] if hasattr(X, "iloc") else X[right_mask],
+            y.iloc[right_mask] if hasattr(y, "iloc") else y[right_mask],
+            depth + 1,
         )
 
         return {
-            'type': 'node',
-            'feature': split['feature_name'],
-            'threshold': split['threshold'],
-            'left': left_tree,
-            'right': right_tree
+            "type": "node",
+            "feature": split["feature_name"],
+            "threshold": split["threshold"],
+            "left": left_tree,
+            "right": right_tree,
         }
 
     def fit(self, X: pd.DataFrame, y: pd.Series) -> None:
@@ -205,7 +235,7 @@ class CustomRandomForestClassifier:
             y: Training labels.
         """
         # Store feature names
-        if hasattr(X, 'columns'):
+        if hasattr(X, "columns"):
             self.feature_names = X.columns.tolist()
 
         # Set random seeds for reproducibility
@@ -215,20 +245,19 @@ class CustomRandomForestClassifier:
 
         # Build trees in parallel
         self.forest = Parallel(n_jobs=self.n_jobs)(
-            delayed(self._build_single_tree)(X, y, seed)
-            for seed in seeds
+            delayed(self._build_single_tree)(X, y, seed) for seed in seeds
         )
 
-    def _build_single_tree(self, X: pd.DataFrame, y: pd.Series,
-                           seed: int) -> Dict[str, Any]:
+    def _build_single_tree(
+        self, X: pd.DataFrame, y: pd.Series, seed: int
+    ) -> Dict[str, Any]:
         """
         Build a single decision tree with bootstrap sampling.
         """
         X_boot, y_boot = self._bootstrap_sample(X, y, random_state=seed)
         return self._build_tree(X_boot, y_boot)
 
-    def _traverse_tree(self, x: np.ndarray,
-                       tree: Dict[str, Any]) -> int:
+    def _traverse_tree(self, x: np.ndarray, tree: Dict[str, Any]) -> int:
         """
         Traverse a tree to make a prediction for a single sample.
 
@@ -239,22 +268,21 @@ class CustomRandomForestClassifier:
         Returns:
             Predicted label.
         """
-        if tree['type'] == 'leaf':
-            return tree['value']
+        if tree["type"] == "leaf":
+            return tree["value"]
 
         # Resolve feature index
         if self.feature_names is not None:
-            feature_index = self.feature_names.index(tree['feature'])
+            feature_index = self.feature_names.index(tree["feature"])
         else:
-            feature_index = tree['feature']  # Assume integer index
+            feature_index = tree["feature"]  # Assume integer index
 
-        if x[feature_index] <= tree['threshold']:
-            return self._traverse_tree(x, tree['left'])
+        if x[feature_index] <= tree["threshold"]:
+            return self._traverse_tree(x, tree["left"])
         else:
-            return self._traverse_tree(x, tree['right'])
+            return self._traverse_tree(x, tree["right"])
 
-    def predict(self,
-                X: pd.DataFrame | NDArray[np.float64]) -> NDArray[np.int16]:
+    def predict(self, X: pd.DataFrame | NDArray[np.float64]) -> NDArray[np.int16]:
         """
         Predict labels for input data using majority voting.
 
@@ -268,12 +296,11 @@ class CustomRandomForestClassifier:
             raise RuntimeError("Model not trained. Call fit() first.")
 
         # Convert to numpy array
-        X_np = X.to_numpy() if hasattr(X, 'to_numpy') else np.array(X)
+        X_np = X.to_numpy() if hasattr(X, "to_numpy") else np.array(X)
 
         # Single sample case
         if len(X_np.shape) == 1:
-            tree_preds = [self._traverse_tree(
-                X_np, tree) for tree in self.forest]
+            tree_preds = [self._traverse_tree(X_np, tree) for tree in self.forest]
             majority_vote, _ = mode(tree_preds)
             return majority_vote[0]
 

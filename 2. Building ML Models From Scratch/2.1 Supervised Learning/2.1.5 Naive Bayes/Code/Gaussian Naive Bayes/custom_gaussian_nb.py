@@ -80,7 +80,9 @@ class CustomGaussianNB:
         """
         return y.value_counts(normalize=True).to_dict()
 
-    def _calculate_params(self, X: pd.DataFrame, y: pd.Series) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    def _calculate_params(
+        self, X: pd.DataFrame, y: pd.Series
+    ) -> Tuple[pd.DataFrame, pd.DataFrame]:
         """
         Compute Gaussian parameters (mean and variance) per class.
 
@@ -117,8 +119,11 @@ class CustomGaussianNB:
             x_vec = sample.values
 
             # Gaussian log PDF: -1/2*[log(2πσ²) + (x-μ)²/σ²]
-            log_pdf = -1/2 * (np.log(2 * np.pi * var_vec) +
-                              ((x_vec - mean_vec) ** 2) / var_vec)
+            log_pdf = (
+                -1
+                / 2
+                * (np.log(2 * np.pi * var_vec) + ((x_vec - mean_vec) ** 2) / var_vec)
+            )
             log_posterior += np.sum(log_pdf)
 
             log_posteriors[cls] = log_posterior

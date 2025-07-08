@@ -9,8 +9,9 @@ class CustomLinearRegression:
     A simple implementation of Linear Regression using gradient descent.
     """
 
-    def __init__(self, w: float = 0.0, b: float = 0.0,
-                 alpha: float = 0.01, epochs: int = 5000) -> None:
+    def __init__(
+        self, w: float = 0.0, b: float = 0.0, alpha: float = 0.01, epochs: int = 5000
+    ) -> None:
         """
         Initialise the CustomLinearRegression instance with given hyperparameters.
 
@@ -38,7 +39,9 @@ class CustomLinearRegression:
         """
         return self.w * x + self.b
 
-    def calculate_loss_MSE(self, y: NDArray[np.float64], y_pred: NDArray[np.float64]) -> float:
+    def calculate_loss_MSE(
+        self, y: NDArray[np.float64], y_pred: NDArray[np.float64]
+    ) -> float:
         """
         Calculate the Mean Squared Error (MSE) loss.
 
@@ -81,23 +84,27 @@ class CustomLinearRegression:
             y: True output values.
         """
         self.gradient_descent(x, y)
-        print(
-            f"Training completed. Coefficient: {self.w:.5f}, Intercept: {self.b:.5f}")
+        print(f"Training completed. Coefficient: {self.w:.5f}, Intercept: {self.b:.5f}")
 
     def plot_loss_history(self) -> None:
         """
         Plot the training loss over epochs.
         """
         plt.figure(figsize=(8, 5))
-        plt.plot(self.loss_history[:20], marker='o', color='b')
-        plt.xlabel('Epochs')
-        plt.ylabel('Loss')
-        plt.title('Loss Over Epochs (Up to 20)')
+        plt.plot(self.loss_history[:20], marker="o", color="b")
+        plt.xlabel("Epochs")
+        plt.ylabel("Loss")
+        plt.title("Loss Over Epochs (Up to 20)")
         plt.grid(True)
         plt.show()
 
-    def plot_prediction(self, X: NDArray[np.float64], y: NDArray[np.float64], x_test: float,
-                        y_pred_single: float) -> None:
+    def plot_prediction(
+        self,
+        X: NDArray[np.float64],
+        y: NDArray[np.float64],
+        x_test: float,
+        y_pred_single: float,
+    ) -> None:
         """
         Plot the regression line, training data, and test data point.
 
@@ -110,9 +117,15 @@ class CustomLinearRegression:
         plt.figure(figsize=(8, 5))
         plt.scatter(X, y)
         plt.plot(X, self.predict(X), color="red", label="Predicted Values")
-        plt.scatter(x_test, y_pred_single, color="orange",
-                    edgecolor="black", label="Test Point", zorder=2)
-        plt.title('Linear Prediction')
+        plt.scatter(
+            x_test,
+            y_pred_single,
+            color="orange",
+            edgecolor="black",
+            label="Test Point",
+            zorder=2,
+        )
+        plt.title("Linear Prediction")
         plt.xlabel("X")
         plt.ylabel("y")
         plt.legend()

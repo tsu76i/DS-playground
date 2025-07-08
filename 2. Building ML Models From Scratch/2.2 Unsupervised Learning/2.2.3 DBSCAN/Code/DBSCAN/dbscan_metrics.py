@@ -17,18 +17,17 @@ class DBSCANMetrics:
             Mean silhouette score for non-noise points, or NaN if < 2 valid clusters.
         """
         unique_labels = np.unique(
-            [label for label in labels if label != -1])  # without -1
+            [label for label in labels if label != -1]
+        )  # without -1
         n_samples = len(X)
         silhouette_vals = np.zeros(n_samples)
 
         if len(unique_labels) < 2:
-            return float('nan')  # Silhouette score undefined for < 2 clusters
+            return float("nan")  # Silhouette score undefined for < 2 clusters
 
-        distance_matrix = np.linalg.norm(
-            X[:, np.newaxis] - X[np.newaxis, :], axis=2)
+        distance_matrix = np.linalg.norm(X[:, np.newaxis] - X[np.newaxis, :], axis=2)
 
-        cluster_masks = {cluster: (labels == cluster)
-                         for cluster in unique_labels}
+        cluster_masks = {cluster: (labels == cluster) for cluster in unique_labels}
 
         for i in range(n_samples):
             if labels[i] == -1:
@@ -57,12 +56,11 @@ class DBSCANMetrics:
                         b_i = distance
 
             # Calculate silhouette for current point
-            silhouette_vals[i] = (b_i - a_i) / \
-                max(a_i, b_i) if max(a_i, b_i) > 0 else 0
+            silhouette_vals[i] = (b_i - a_i) / max(a_i, b_i) if max(a_i, b_i) > 0 else 0
 
         valid_points = labels != -1
         if not np.any(valid_points):
-            return float('nan')
+            return float("nan")
         return np.mean(silhouette_vals[valid_points]).round(4)
 
     def noise_ratio_and_cluster_count(labels: List[int]) -> Tuple[float, int]:
@@ -78,11 +76,12 @@ class DBSCANMetrics:
             - n_clusters: Number of clusters (excluding noise)
         """
         labels = np.array(labels)
-        is_noise = (labels == -1)
+        is_noise = labels == -1
         noise_ratio = float(np.mean(is_noise))
 
         unique_labels = np.unique(
-            [label for label in labels if label != -1])  # without -1
+            [label for label in labels if label != -1]
+        )  # without -1
         n_clusters = len(unique_labels)
         return noise_ratio, n_clusters
 
@@ -104,10 +103,9 @@ class DBSCANMetrics:
         if not isinstance(X, np.ndarray):
             X = X.values
         silhouette = DBSCANMetrics.silhouette_score(X, labels)
-        noise_ratio, n_clusters = DBSCANMetrics.noise_ratio_and_cluster_count(
-            labels)
+        noise_ratio, n_clusters = DBSCANMetrics.noise_ratio_and_cluster_count(labels)
         return {
-            'silhouette_score': silhouette,
-            'noise_ratio': noise_ratio,
-            'n_clusters': n_clusters
+            "silhouette_score": silhouette,
+            "noise_ratio": noise_ratio,
+            "n_clusters": n_clusters,
         }

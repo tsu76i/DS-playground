@@ -4,8 +4,9 @@ from numpy.typing import NDArray
 
 
 class HelperFuncs:
-    def train_test_split(X: NDArray, y: NDArray, test_size: float = 0.2,
-                         random_state: int = None) -> Tuple[NDArray, NDArray, NDArray, NDArray]:
+    def train_test_split(
+        X: NDArray, y: NDArray, test_size: float = 0.2, random_state: int = None
+    ) -> Tuple[NDArray, NDArray, NDArray, NDArray]:
         """
         Split arrays or matrices into random train and test subsets.
 

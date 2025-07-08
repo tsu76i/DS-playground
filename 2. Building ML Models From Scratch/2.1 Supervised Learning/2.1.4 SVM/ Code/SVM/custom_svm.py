@@ -3,8 +3,7 @@ from typing import Callable
 from typing import Tuple
 from numpy.typing import NDArray
 
-KernelFunctionType = Callable[[
-    NDArray[np.float64], NDArray[np.float64]], float]
+KernelFunctionType = Callable[[NDArray[np.float64], NDArray[np.float64]], float]
 
 
 class CustomSVM:
@@ -29,10 +28,18 @@ class CustomSVM:
         weighted_sv: Precomputed product of alpha_sv and y_sv for efficiency.
     """
 
-    def __init__(self, kernel: str = 'linear', C: float = 1.0, tol: float = 1e-3,
-                 max_passes: int = 10, degree: int = 3, coef0: float = 1.0,
-                 gamma: float = 0.5, sv_threshold: float = 1e-8,
-                 alpha_diff_threshold: float = 1e-8):
+    def __init__(
+        self,
+        kernel: str = "linear",
+        C: float = 1.0,
+        tol: float = 1e-3,
+        max_passes: int = 10,
+        degree: int = 3,
+        coef0: float = 1.0,
+        gamma: float = 0.5,
+        sv_threshold: float = 1e-8,
+        alpha_diff_threshold: float = 1e-8,
+    ):
         """
         Initialise the SVM model with the given hyperparameters.
 
@@ -75,14 +82,14 @@ class CustomSVM:
         Returns:
             Kernel function.
         """
-        if kernel == 'linear':
+        if kernel == "linear":
             return lambda x1, x2: np.dot(x1, x2)
-        elif kernel == 'poly':
+        elif kernel == "poly":
             return lambda x1, x2: (np.dot(x1, x2) + self.coef0) ** self.degree
-        elif kernel == 'rbf':
+        elif kernel == "rbf":
             return lambda x1, x2: np.exp(-self.gamma * np.linalg.norm(x1 - x2) ** 2)
         else:
-            raise ValueError(f'Unsupported kernel type: {kernel}')
+            raise ValueError(f"Unsupported kernel type: {kernel}")
 
     def compute_kernel_matrix(self, X: NDArray[np.float64]) -> NDArray[np.int64]:
         """
@@ -96,8 +103,14 @@ class CustomSVM:
         """
         return np.array([[self.kernel_func(x1, x2) for x2 in X] for x1 in X])
 
-    def error(self, i: int, alphas: NDArray[np.float64], y: NDArray[np.int64],
-              K: NDArray[np.int64], b: float) -> float:
+    def error(
+        self,
+        i: int,
+        alphas: NDArray[np.float64],
+        y: NDArray[np.int64],
+        K: NDArray[np.int64],
+        b: float,
+    ) -> float:
         """
         Compute the error for the i-th sample.
 
@@ -113,7 +126,9 @@ class CustomSVM:
         """
         return np.dot(alphas * y, K[:, i]) + b - y[i]
 
-    def bounds(self, y_i: int, y_j: int, alpha_i: float, alpha_j: float) -> Tuple[float, float]:
+    def bounds(
+        self, y_i: int, y_j: int, alpha_i: float, alpha_j: float
+    ) -> Tuple[float, float]:
         """
         Compute the bounds for alpha_j during optimisation.
 
@@ -130,9 +145,21 @@ class CustomSVM:
             return max(0, alpha_j - alpha_i), min(self.C, self.C + alpha_j - alpha_i)
         return max(0, alpha_i + alpha_j - self.C), min(self.C, alpha_i + alpha_j)
 
-    def update_bias(self, b: float, Ei: float, Ej: float, y_i: int, y_j: int,
-                    alpha_i: float, alpha_j: float, alpha_i_old: float,
-                    alpha_j_old: float, K: NDArray[np.int64], i: int, j: int) -> float:
+    def update_bias(
+        self,
+        b: float,
+        Ei: float,
+        Ej: float,
+        y_i: int,
+        y_j: int,
+        alpha_i: float,
+        alpha_j: float,
+        alpha_i_old: float,
+        alpha_j_old: float,
+        K: NDArray[np.int64],
+        i: int,
+        j: int,
+    ) -> float:
         """
         Update the bias term during the optimisation process.
 
@@ -153,10 +180,18 @@ class CustomSVM:
         Returns:
             Updated bias term.
         """
-        b1 = b - Ei - y_i * (alpha_i - alpha_i_old) * \
-            K[i, i] - y_j * (alpha_j - alpha_j_old) * K[i, j]
-        b2 = b - Ej - y_i * (alpha_i - alpha_i_old) * \
-            K[i, j] - y_j * (alpha_j - alpha_j_old) * K[j, j]
+        b1 = (
+            b
+            - Ei
+            - y_i * (alpha_i - alpha_i_old) * K[i, i]
+            - y_j * (alpha_j - alpha_j_old) * K[i, j]
+        )
+        b2 = (
+            b
+            - Ej
+            - y_i * (alpha_i - alpha_i_old) * K[i, j]
+            - y_j * (alpha_j - alpha_j_old) * K[j, j]
+        )
         if 0 < alpha_i < self.C:
             return b1
         elif 0 < alpha_j < self.C:
@@ -190,7 +225,9 @@ class CustomSVM:
                 Ei = self.error(i, alphas, y, K, b)
 
                 # Check if the sample violated the KKT conditions
-                if (y[i] * Ei < -self.tol and alphas[i] < self.C) or (y[i] * Ei > self.tol and alphas[i] > 0):
+                if (y[i] * Ei < -self.tol and alphas[i] < self.C) or (
+                    y[i] * Ei > self.tol and alphas[i] > 0
+                ):
                     # Randomly select a second sample (j) different from i
                     j = np.random.choice([x for x in range(n) if x != i])
 
@@ -227,8 +264,20 @@ class CustomSVM:
                     alphas[i] += y[i] * y[j] * (alpha_j_old - alphas[j])
 
                     # Update the bias term to ensure the KKT conditions are satisfied
-                    b = self.update_bias(b, Ei, Ej, y[i], y[j],
-                                         alphas[i], alphas[j], alpha_i_old, alpha_j_old, K, i, j)
+                    b = self.update_bias(
+                        b,
+                        Ei,
+                        Ej,
+                        y[i],
+                        y[j],
+                        alphas[i],
+                        alphas[j],
+                        alpha_i_old,
+                        alpha_j_old,
+                        K,
+                        i,
+                        j,
+                    )
 
                     # +1 to the count of alpha updates
                     alpha_changed += 1
@@ -241,10 +290,12 @@ class CustomSVM:
 
         # Store support vector parameters
         self.alpha_sv = alphas[sv_mask]  # Non-zero Lagrange multipliers
-        self.X_sv = X[sv_mask]           # Corresponding feature vectors
-        self.y_sv = y[sv_mask]           # Corresponding labels
-        self.b = b                       # Final bias term
-        self._weighted_sv = self.alpha_sv * self.y_sv  # Precompute for decision function
+        self.X_sv = X[sv_mask]  # Corresponding feature vectors
+        self.y_sv = y[sv_mask]  # Corresponding labels
+        self.b = b  # Final bias term
+        self._weighted_sv = (
+            self.alpha_sv * self.y_sv
+        )  # Precompute for decision function
 
     def decision_function(self, X_test: NDArray[np.float64]) -> NDArray[np.float64]:
         """
@@ -256,8 +307,7 @@ class CustomSVM:
         Returns:
             Decision values for the test samples.
         """
-        K = np.array([[self.kernel_func(x, sv)
-                     for sv in self.X_sv] for x in X_test])
+        K = np.array([[self.kernel_func(x, sv) for sv in self.X_sv] for x in X_test])
         return np.dot(K, self._weighted_sv) + self.b
 
     def predict(self, X_test: NDArray[np.float64]) -> NDArray[np.int64]:
@@ -285,7 +335,9 @@ class CustomSVM:
         """
         return np.mean(y_pred == y_true)
 
-    def get_margin_support_vectors(self, margin: float = 1.0, eps: float = 1e-3) -> NDArray[np.float64]:
+    def get_margin_support_vectors(
+        self, margin: float = 1.0, eps: float = 1e-3
+    ) -> NDArray[np.float64]:
         """
         Retrieve support vectors lying within the margin.
 

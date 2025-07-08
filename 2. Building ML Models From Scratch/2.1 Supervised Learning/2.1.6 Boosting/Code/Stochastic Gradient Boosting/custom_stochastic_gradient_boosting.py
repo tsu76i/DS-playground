@@ -14,9 +14,9 @@ class CustomSGBRegressor:
         learning_rate: float = 0.1,
         max_depth: int = 3,
         min_samples_leaf: int = 1,
-        sub_samples: float = 0.8,   # Added
-        sub_features: float = 0.8,   # Added
-        random_state: int = None    # Added
+        sub_samples: float = 0.8,  # Added
+        sub_features: float = 0.8,  # Added
+        random_state: int = None,  # Added
     ):
         """
         Initialises the CustomSGBRegressor.
@@ -36,9 +36,9 @@ class CustomSGBRegressor:
         self.min_samples_leaf = min_samples_leaf
         self.models: List[Dict[str, Any] | float] = []
         self.initial_prediction: float = 0.0
-        self.sub_samples = sub_samples      # Added
-        self.sub_features = sub_features    # Added
-        self.random_state = random_state    # Added
+        self.sub_samples = sub_samples  # Added
+        self.sub_features = sub_features  # Added
+        self.random_state = random_state  # Added
 
     def fit(self, X: NDArray[np.float64], y: NDArray[np.float64]) -> None:
         """
@@ -58,12 +58,15 @@ class CustomSGBRegressor:
             residuals = y - predictions
             # Stochastic row subsampling
             n_samples = int(self.sub_samples * X.shape[0])
-            sample_indices = np.random.choice(
-                X.shape[0], n_samples, replace=False)
+            sample_indices = np.random.choice(X.shape[0], n_samples, replace=False)
             X_sub, residuals_sub = X[sample_indices], residuals[sample_indices]
             tree = self._build_tree(
                 # Build trees with subsamples
-                X_sub, residuals_sub, self.max_depth, self.min_samples_leaf)
+                X_sub,
+                residuals_sub,
+                self.max_depth,
+                self.min_samples_leaf,
+            )
             self.models.append(tree)
             # Predictions on the entire dataset
             update = self._predict_tree_batch(tree, X)
@@ -96,9 +99,18 @@ class CustomSGBRegressor:
         """
         return np.var(y)
 
-    def _split_dataset(self, X: NDArray[np.float64],
-                       y: NDArray[np.float64], feature_index: int,
-                       threshold: float) -> Tuple[NDArray[np.float64], NDArray[np.float64], NDArray[np.float64], NDArray[np.float64]]:
+    def _split_dataset(
+        self,
+        X: NDArray[np.float64],
+        y: NDArray[np.float64],
+        feature_index: int,
+        threshold: float,
+    ) -> Tuple[
+        NDArray[np.float64],
+        NDArray[np.float64],
+        NDArray[np.float64],
+        NDArray[np.float64],
+    ]:
         """
         Splits the dataset based on a feature and threshold.
 
@@ -115,8 +127,9 @@ class CustomSGBRegressor:
         right_mask = ~left_mask
         return X[left_mask], y[left_mask], X[right_mask], y[right_mask]
 
-    def _best_split(self, X: NDArray[np.float64],
-                    y: NDArray[np.float64], min_samples_leaf: int) -> Tuple[int | None, float | None]:
+    def _best_split(
+        self, X: NDArray[np.float64], y: NDArray[np.float64], min_samples_leaf: int
+    ) -> Tuple[int | None, float | None]:
         """
         Find the best feature and threshold to split the dataset, minimising weighted variance.
 
@@ -133,26 +146,30 @@ class CustomSGBRegressor:
         n_features = int(self.sub_features * n)
         feature_indices = np.random.choice(n, n_features, replace=False)
 
-        best_feature, best_threshold, best_var = None, None, float('inf')
+        best_feature, best_threshold, best_var = None, None, float("inf")
         for feature in feature_indices:
             thresholds = np.unique(X[:, feature])
             for threshold in thresholds:
-                _, y_left, _, y_right = self._split_dataset(
-                    X, y, feature, threshold)
+                _, y_left, _, y_right = self._split_dataset(X, y, feature, threshold)
                 if len(y_left) < min_samples_leaf or len(y_right) < min_samples_leaf:
                     continue
                 var_left = self._variance(y_left)
                 var_right = self._variance(y_right)
-                var_split = (len(y_left) * var_left +
-                             len(y_right) * var_right) / m
+                var_split = (len(y_left) * var_left + len(y_right) * var_right) / m
                 if var_split < best_var:
                     best_feature = feature
                     best_threshold = threshold
                     best_var = var_split
         return best_feature, best_threshold
 
-    def _build_tree(self, X: NDArray[np.float64], y: NDArray[np.float64],
-                    max_depth: int, min_samples_leaf: int, depth: int = 0) -> Dict[str, Any] | float:
+    def _build_tree(
+        self,
+        X: NDArray[np.float64],
+        y: NDArray[np.float64],
+        max_depth: int,
+        min_samples_leaf: int,
+        depth: int = 0,
+    ) -> Dict[str, Any] | float:
         """
         Recursively build a regression tree.
 
@@ -171,16 +188,21 @@ class CustomSGBRegressor:
         feature, threshold = self._best_split(X, y, min_samples_leaf)
         if feature is None:
             return float(np.mean(y))
-        X_left, y_left, X_right, y_right = self._split_dataset(
-            X, y, feature, threshold)
+        X_left, y_left, X_right, y_right = self._split_dataset(X, y, feature, threshold)
         return {
-            'feature': feature,
-            'threshold': threshold,
-            'left': self._build_tree(X_left, y_left, max_depth, min_samples_leaf, depth + 1),
-            'right': self._build_tree(X_right, y_right, max_depth, min_samples_leaf, depth + 1)
+            "feature": feature,
+            "threshold": threshold,
+            "left": self._build_tree(
+                X_left, y_left, max_depth, min_samples_leaf, depth + 1
+            ),
+            "right": self._build_tree(
+                X_right, y_right, max_depth, min_samples_leaf, depth + 1
+            ),
         }
 
-    def _predict_tree(self, tree: Dict[str, Any] | float, x: NDArray[np.float64]) -> float:
+    def _predict_tree(
+        self, tree: Dict[str, Any] | float, x: NDArray[np.float64]
+    ) -> float:
         """
         Predict the target value for a single sample using the regression tree.
 
@@ -192,13 +214,15 @@ class CustomSGBRegressor:
             float: Predicted value.
         """
         while isinstance(tree, dict):
-            if x[tree['feature']] < tree['threshold']:
-                tree = tree['left']
+            if x[tree["feature"]] < tree["threshold"]:
+                tree = tree["left"]
             else:
-                tree = tree['right']
+                tree = tree["right"]
         return float(tree)
 
-    def _predict_tree_batch(self, tree: Dict[str, Any] | float, X: NDArray[np.float64]) -> NDArray[np.float64]:
+    def _predict_tree_batch(
+        self, tree: Dict[str, Any] | float, X: NDArray[np.float64]
+    ) -> NDArray[np.float64]:
         """
         Predict target values for a batch of samples using the regression tree.
 

@@ -35,13 +35,13 @@ class MaxPooling:
 
         for i in range(out_h):
             for j in range(out_w):
-                h_start, h_end = i*self.pool_size, (i+1)*self.pool_size
-                w_start, w_end = j*self.pool_size, (j+1)*self.pool_size
+                h_start, h_end = i * self.pool_size, (i + 1) * self.pool_size
+                w_start, w_end = j * self.pool_size, (j + 1) * self.pool_size
                 region = input[:, h_start:h_end, w_start:w_end, :]
                 output[:, i, j, :] = np.max(region, axis=(1, 2))
 
                 # Create mask for backpropagation
-                mask_region = (region == output[:, i, j, :][:, None, None, :])
+                mask_region = region == output[:, i, j, :][:, None, None, :]
                 self.mask[:, h_start:h_end, w_start:w_end, :] = mask_region
         return output
 
@@ -60,16 +60,17 @@ class MaxPooling:
 
         for i in range(out_h):
             for j in range(out_w):
-                h_start, h_end = i*self.pool_size, (i+1)*self.pool_size
-                w_start, w_end = j*self.pool_size, (j+1)*self.pool_size
+                h_start, h_end = i * self.pool_size, (i + 1) * self.pool_size
+                w_start, w_end = j * self.pool_size, (j + 1) * self.pool_size
 
                 # Distribute gradient to max positions
-                grad_region = grad[:, i:i+1, j:j+1, :]
+                grad_region = grad[:, i : i + 1, j : j + 1, :]
                 grad_region = np.repeat(grad_region, self.pool_size, axis=1)
                 grad_region = np.repeat(grad_region, self.pool_size, axis=2)
 
                 mask_region = self.mask[:, h_start:h_end, w_start:w_end, :]
-                grad_input[:, h_start:h_end, w_start:w_end,
-                           :] += grad_region * mask_region
+                grad_input[:, h_start:h_end, w_start:w_end, :] += (
+                    grad_region * mask_region
+                )
 
         return grad_input

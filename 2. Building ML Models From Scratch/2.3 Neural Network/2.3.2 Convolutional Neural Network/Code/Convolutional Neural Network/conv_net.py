@@ -16,17 +16,21 @@ class ConvNet:
         """
         Initialise CNN layers with fixed architecture.
         """
-        self.conv1 = Conv2D(num_filters=8, filter_size=3,
-                            input_shape=(28, 28, 1))
+        self.conv1 = Conv2D(num_filters=8, filter_size=3, input_shape=(28, 28, 1))
         self.relu1 = ReLU()
         self.pool1 = MaxPooling(pool_size=2)
         self.flatten = Flatten()
-        self.dense1 = Dense(input_size=13*13*8, output_size=128)
+        self.dense1 = Dense(input_size=13 * 13 * 8, output_size=128)
         self.relu2 = ReLU()
         self.dense2 = Dense(input_size=128, output_size=10)
         self.layers = [
-            self.conv1, self.relu1, self.pool1,
-            self.flatten, self.dense1, self.relu2, self.dense2
+            self.conv1,
+            self.relu1,
+            self.pool1,
+            self.flatten,
+            self.dense1,
+            self.relu2,
+            self.dense2,
         ]
 
     def forward(self, x: NDArray[np.float64]) -> NDArray[np.float64]:
@@ -61,5 +65,5 @@ class ConvNet:
             learning_rate: Step size for parameter updates.
         """
         for layer in self.layers:
-            if hasattr(layer, 'update'):
+            if hasattr(layer, "update"):
                 layer.update(learning_rate)

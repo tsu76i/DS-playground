@@ -6,8 +6,13 @@ from numpy.typing import NDArray
 
 
 class CustomCatBoost:
-    def __init__(self, n_estimators: int = 100, learning_rate: float = 0.1,
-                 max_depth: int = 3, min_samples_split: int = 2) -> None:
+    def __init__(
+        self,
+        n_estimators: int = 100,
+        learning_rate: float = 0.1,
+        max_depth: int = 3,
+        min_samples_split: int = 2,
+    ) -> None:
         """
         Initialise the CustomCatBoost model with hyperparameters.
 
@@ -23,7 +28,9 @@ class CustomCatBoost:
         self.min_samples_split = min_samples_split
         self.trees = []
 
-    def ordered_target_encode(self, df: pd.DataFrame, col: str, target: str) -> pd.Series:
+    def ordered_target_encode(
+        self, df: pd.DataFrame, col: str, target: str
+    ) -> pd.Series:
         """
         Vectorised ordered target encoding for a single categorical column.
 
@@ -42,8 +49,9 @@ class CustomCatBoost:
         enc.fillna(global_mean, inplace=True)
         return enc
 
-    def apply_ordered_target_encoding(self, df: pd.DataFrame, cat_cols: List[str],
-                                      target: str) -> pd.DataFrame:
+    def apply_ordered_target_encoding(
+        self, df: pd.DataFrame, cat_cols: List[str], target: str
+    ) -> pd.DataFrame:
         """
         Apply ordered target encoding to all categorical columns in a DataFrame.
 
@@ -60,8 +68,9 @@ class CustomCatBoost:
             df_enc[col] = self.ordered_target_encode(df_enc, col, target)
         return df_enc
 
-    def find_best_split(self, X: NDArray[np.float64],
-                        y: NDArray[np.float64]) -> Tuple[Optional[int], Optional[float], NDArray[np.bool_], NDArray[np.bool_]]:
+    def find_best_split(
+        self, X: NDArray[np.float64], y: NDArray[np.float64]
+    ) -> Tuple[Optional[int], Optional[float], NDArray[np.bool_], NDArray[np.bool_]]:
         """
         Find the best feature and split value to minimise the weighted variance of the target.
 
@@ -76,7 +85,13 @@ class CustomCatBoost:
                 best_right: Boolean mask for samples going to the right child.
         """
         n_samples, n_features = X.shape
-        best_feature, best_split, best_score, best_left, best_right = None, None, np.inf, None, None
+        best_feature, best_split, best_score, best_left, best_right = (
+            None,
+            None,
+            np.inf,
+            None,
+            None,
+        )
         for feature_idx in range(n_features):
             values = np.unique(X[:, feature_idx])
             if len(values) == 1:
@@ -88,8 +103,10 @@ class CustomCatBoost:
                 right_idx = ~left_idx
                 if not left_idx.any() or not right_idx.any():
                     continue
-                score = np.var(y[left_idx]) * left_idx.sum() + \
-                    np.var(y[right_idx]) * right_idx.sum()
+                score = (
+                    np.var(y[left_idx]) * left_idx.sum()
+                    + np.var(y[right_idx]) * right_idx.sum()
+                )
                 if score < best_score:
                     best_feature = feature_idx
                     best_split = split_val
@@ -98,8 +115,9 @@ class CustomCatBoost:
                     best_right = right_idx
         return best_feature, best_split, best_left, best_right
 
-    def build_tree(self, X: NDArray[np.float64], y: NDArray[np.float64],
-                   depth: int = 0) -> Dict[str, Any] | float:
+    def build_tree(
+        self, X: NDArray[np.float64], y: NDArray[np.float64], depth: int = 0
+    ) -> Dict[str, Any] | float:
         """
         Recursively build a decision tree for regression.
 
@@ -112,21 +130,25 @@ class CustomCatBoost:
             A decision tree node represented as a dictionary or a leaf value (float).
         """
         n_samples = X.shape[0]
-        if depth >= self.max_depth or n_samples < self.min_samples_split or np.all(y == y[0]):
+        if (
+            depth >= self.max_depth
+            or n_samples < self.min_samples_split
+            or np.all(y == y[0])
+        ):
             return np.mean(y)
-        best_feature, best_split, best_left, best_right = self.find_best_split(
-            X, y)
+        best_feature, best_split, best_left, best_right = self.find_best_split(X, y)
         if best_feature is None:
             return np.mean(y)
         return {
-            'feature': best_feature,
-            'split': best_split,
-            'left': self.build_tree(X[best_left], y[best_left], depth + 1),
-            'right': self.build_tree(X[best_right], y[best_right], depth + 1)
+            "feature": best_feature,
+            "split": best_split,
+            "left": self.build_tree(X[best_left], y[best_left], depth + 1),
+            "right": self.build_tree(X[best_right], y[best_right], depth + 1),
         }
 
-    def predict_tree(self, node: Dict[str, Any] | float,
-                     row: NDArray[np.float64]) -> float:
+    def predict_tree(
+        self, node: Dict[str, Any] | float, row: NDArray[np.float64]
+    ) -> float:
         """
         Predict the target value for a single sample using the decision tree.
 
@@ -138,14 +160,21 @@ class CustomCatBoost:
             Predicted target value.
         """
         while isinstance(node, dict):
-            if row[node['feature']] <= node['split']:
-                node = node['left']
+            if row[node["feature"]] <= node["split"]:
+                node = node["left"]
             else:
-                node = node['right']
+                node = node["right"]
         return node
 
-    def fit(self, X: NDArray[np.float64], y: NDArray[np.int64], n_classes: int,
-            cat_cols: Optional[List[str]] = None, df: Optional[pd.DataFrame] = None, target_col: Optional[str] = None) -> None:
+    def fit(
+        self,
+        X: NDArray[np.float64],
+        y: NDArray[np.int64],
+        n_classes: int,
+        cat_cols: Optional[List[str]] = None,
+        df: Optional[pd.DataFrame] = None,
+        target_col: Optional[str] = None,
+    ) -> None:
         """
         Fit the gradient boosting model for multi-class classification.
 
@@ -158,8 +187,7 @@ class CustomCatBoost:
             target_col: Target column name in DataFrame. Defaults to None.
         """
         if cat_cols is not None and df is not None and target_col is not None:
-            df_enc = self.apply_ordered_target_encoding(
-                df, cat_cols, target_col)
+            df_enc = self.apply_ordered_target_encoding(df, cat_cols, target_col)
             for col in cat_cols:
                 if col in df_enc.columns:
                     X[:, df.columns.get_loc(col)] = df_enc[col].values
@@ -180,7 +208,9 @@ class CustomCatBoost:
                 trees_m.append(tree)
             self.trees.append(trees_m)
 
-    def predict(self, X: NDArray[np.float64], n_classes: int) -> Tuple[NDArray[np.int64], NDArray[np.float64]]:
+    def predict(
+        self, X: NDArray[np.float64], n_classes: int
+    ) -> Tuple[NDArray[np.int64], NDArray[np.float64]]:
         """
         Predict class labels and probabilities using the fitted gradient boosting model.
 
@@ -202,9 +232,15 @@ class CustomCatBoost:
         P /= P.sum(axis=1, keepdims=True)
         return np.argmax(P, axis=1), P
 
-    def fit_predict(self, X: NDArray[np.float64], y: NDArray[np.int64],
-                    n_classes: int, cat_cols: Optional[List[str]] = None, df: Optional[pd.DataFrame] = None,
-                    target_col: Optional[str] = None) -> Tuple[NDArray[np.int64], NDArray[np.float64]]:
+    def fit_predict(
+        self,
+        X: NDArray[np.float64],
+        y: NDArray[np.int64],
+        n_classes: int,
+        cat_cols: Optional[List[str]] = None,
+        df: Optional[pd.DataFrame] = None,
+        target_col: Optional[str] = None,
+    ) -> Tuple[NDArray[np.int64], NDArray[np.float64]]:
         """
         Fit the model and predict class labels and probabilities.
 

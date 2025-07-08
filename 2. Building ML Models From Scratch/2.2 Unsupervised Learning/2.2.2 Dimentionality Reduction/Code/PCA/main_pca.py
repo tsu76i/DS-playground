@@ -15,8 +15,9 @@ def main():
     explained_variance_ratio = custom_pca.explained_variance_ratio
     cumulative_explained_variance = custom_pca.cumulative_explained_variance
 
-    HelperFuncs.plot_explained_variance(explained_variance_ratio,
-                                        cumulative_explained_variance)  # Plot EV & CEV
+    HelperFuncs.plot_explained_variance(
+        explained_variance_ratio, cumulative_explained_variance
+    )  # Plot EV & CEV
 
     # Re-initialise and fit with n_components = 8
     custom_pca = CustomPCA(n_components=8)
@@ -27,5 +28,5 @@ def main():
     print(X_transformed_custom)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

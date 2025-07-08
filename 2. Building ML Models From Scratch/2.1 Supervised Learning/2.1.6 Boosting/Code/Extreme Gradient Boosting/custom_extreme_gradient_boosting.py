@@ -8,9 +8,15 @@ class CustomXGBoost:
     Custom Extreme Gradient Boosting for regression with decision trees.
     """
 
-    def __init__(self, n_estimators: int = 10, learning_rate: float = 0.1,
-                 max_depth: int = 3, min_samples_leaf: int = 1, lambda_: float = 1.0,
-                 gamma: float = 0.0) -> None:
+    def __init__(
+        self,
+        n_estimators: int = 10,
+        learning_rate: float = 0.1,
+        max_depth: int = 3,
+        min_samples_leaf: int = 1,
+        lambda_: float = 1.0,
+        gamma: float = 0.0,
+    ) -> None:
         """
         Initialise the CustomXGBoost regressor with specified hyperparameters.
 
@@ -31,8 +37,9 @@ class CustomXGBoost:
         self.initial_prediction = None
         self.models: List[Dict[str, Any] | float] = []
 
-    def _compute_gradients_and_hessians(self, y_true: NDArray[np.float64],
-                                        y_pred: NDArray[np.float64]) -> Tuple[NDArray[np.float64], NDArray[np.float64]]:
+    def _compute_gradients_and_hessians(
+        self, y_true: NDArray[np.float64], y_pred: NDArray[np.float64]
+    ) -> Tuple[NDArray[np.float64], NDArray[np.float64]]:
         """
         Compute gradients and Hessians for squared error loss.
 
@@ -47,8 +54,12 @@ class CustomXGBoost:
         hessians = np.ones_like(y_true)
         return gradients, hessians
 
-    def _best_split(self, X: NDArray[np.float64], gradients: NDArray[np.float64],
-                    hessians: NDArray[np.float64]) -> Tuple[int, float, float]:
+    def _best_split(
+        self,
+        X: NDArray[np.float64],
+        gradients: NDArray[np.float64],
+        hessians: NDArray[np.float64],
+    ) -> Tuple[int, float, float]:
         """
         Find the best split for a node in the XGBoost tree.
 
@@ -65,23 +76,33 @@ class CustomXGBoost:
             for threshold in thresholds:
                 left_mask = X[:, feature] < threshold
                 right_mask = ~left_mask
-                if left_mask.sum() < self.min_samples_leaf or right_mask.sum() < self.min_samples_leaf:
+                if (
+                    left_mask.sum() < self.min_samples_leaf
+                    or right_mask.sum() < self.min_samples_leaf
+                ):
                     continue
-                G_L, H_L = gradients[left_mask].sum(
-                ), hessians[left_mask].sum()
-                G_R, H_R = gradients[right_mask].sum(
-                ), hessians[right_mask].sum()
-                gain = 0.5 * (
-                    G_L**2 / (H_L + self.lambda_) +
-                    G_R**2 / (H_R + self.lambda_) -
-                    (G_L + G_R)**2 / (H_L + H_R + self.lambda_)
-                ) - self.gamma
+                G_L, H_L = gradients[left_mask].sum(), hessians[left_mask].sum()
+                G_R, H_R = gradients[right_mask].sum(), hessians[right_mask].sum()
+                gain = (
+                    0.5
+                    * (
+                        G_L**2 / (H_L + self.lambda_)
+                        + G_R**2 / (H_R + self.lambda_)
+                        - (G_L + G_R) ** 2 / (H_L + H_R + self.lambda_)
+                    )
+                    - self.gamma
+                )
                 if gain > best_gain:
                     best_feature, best_threshold, best_gain = feature, threshold, gain
         return best_feature, best_threshold, best_gain
 
-    def _build_tree(self, X: NDArray[np.float64], gradients: NDArray[np.float64],
-                    hessians: NDArray[np.float64], depth: int = 0) -> Dict[str, Any] | float:
+    def _build_tree(
+        self,
+        X: NDArray[np.float64],
+        gradients: NDArray[np.float64],
+        hessians: NDArray[np.float64],
+        depth: int = 0,
+    ) -> Dict[str, Any] | float:
         """
         Recursively build a decision tree for XGBoost.
 
@@ -102,17 +123,19 @@ class CustomXGBoost:
         left_mask = X[:, feature] < threshold
         right_mask = ~left_mask
         return {
-            'feature': feature,
-            'threshold': threshold,
-            'left': self._build_tree(
+            "feature": feature,
+            "threshold": threshold,
+            "left": self._build_tree(
                 X[left_mask], gradients[left_mask], hessians[left_mask], depth + 1
             ),
-            'right': self._build_tree(
+            "right": self._build_tree(
                 X[right_mask], gradients[right_mask], hessians[right_mask], depth + 1
-            )
+            ),
         }
 
-    def _predict_tree(self, tree: Dict[str, Any] | float, x: NDArray[np.float64]) -> float:
+    def _predict_tree(
+        self, tree: Dict[str, Any] | float, x: NDArray[np.float64]
+    ) -> float:
         """
         Predict the output for a single sample using a decision tree.
 
@@ -124,14 +147,16 @@ class CustomXGBoost:
             Predicted value for the sample.
         """
         while isinstance(tree, dict):
-            if x[tree['feature']] < tree['threshold']:
-                tree = tree['left']
+            if x[tree["feature"]] < tree["threshold"]:
+                tree = tree["left"]
             else:
-                tree = tree['right']
+                tree = tree["right"]
 
         return tree
 
-    def _predict_tree_batch(self, tree: Dict[str, Any] | float, X: NDArray[np.float64]) -> NDArray[np.float64]:
+    def _predict_tree_batch(
+        self, tree: Dict[str, Any] | float, X: NDArray[np.float64]
+    ) -> NDArray[np.float64]:
         """
         Predict outputs for a batch of samples using a decision tree.
 
@@ -156,8 +181,7 @@ class CustomXGBoost:
         y_pred = np.full_like(y, np.mean(y), dtype=float)
         self.initial_prediction = np.mean(y)
         for _ in range(self.n_estimators):
-            gradients, hessians = self._compute_gradients_and_hessians(
-                y, y_pred)
+            gradients, hessians = self._compute_gradients_and_hessians(y, y_pred)
             tree = self._build_tree(X, gradients, hessians)
             update = self._predict_tree_batch(tree, X)
             y_pred += self.learning_rate * update

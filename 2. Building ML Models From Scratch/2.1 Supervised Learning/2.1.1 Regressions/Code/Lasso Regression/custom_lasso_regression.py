@@ -7,8 +7,14 @@ class CustomLassoRegression:
     A simple implementation of Lasso Regression using gradient descent.
     """
 
-    def __init__(self, w: float = 0.0, b: float = 0.0,
-                 alpha: float = 0.001, epochs: int = 20000, lambda_: float = 1.0) -> None:
+    def __init__(
+        self,
+        w: float = 0.0,
+        b: float = 0.0,
+        alpha: float = 0.001,
+        epochs: int = 20000,
+        lambda_: float = 1.0,
+    ) -> None:
         """
         Initialise the CustomLassoRegression instance with given hyperparameters.
 
@@ -38,7 +44,9 @@ class CustomLassoRegression:
         """
         return self.w * X + self.b
 
-    def calculate_loss_lasso(self, y: NDArray[np.float64], y_pred: NDArray[np.float64]) -> float:
+    def calculate_loss_lasso(
+        self, y: NDArray[np.float64], y_pred: NDArray[np.float64]
+    ) -> float:
         """
         Calculate Lasso Loss function (MSE + L1 penalty).
 
@@ -68,8 +76,7 @@ class CustomLassoRegression:
             loss = self.calculate_loss_lasso(y, y_pred)
             self.loss_history.append(loss)
 
-            dL_dw = -(2 / n) * np.sum(X * (y - y_pred)) + \
-                self.lambda_ * np.sign(self.w)
+            dL_dw = -(2 / n) * np.sum(X * (y - y_pred)) + self.lambda_ * np.sign(self.w)
             dL_db = -(2 / n) * np.sum(y - y_pred)
 
             self.w -= self.alpha * dL_dw
@@ -84,5 +91,4 @@ class CustomLassoRegression:
             y: True output values.
         """
         self.gradient_descent(X, y)
-        print(
-            f"Training completed. Coefficient: {self.w:.5f}, Intercept: {self.b:.5f}")
+        print(f"Training completed. Coefficient: {self.w:.5f}, Intercept: {self.b:.5f}")

@@ -7,35 +7,41 @@ from custom_knn_regressor import CustomKNNRegressor
 
 def main():
     # Import data
-    df = pd.read_csv(
-        '2. Building ML Models From Scratch/_datasets/diamonds.csv')
+    df = pd.read_csv("2. Building ML Models From Scratch/_datasets/diamonds.csv")
 
     # Data Pre-processing
     df = HelperFuncs.remove_outliers_iqr(df)
     categorical_features = {
-        'cut': ['Fair', 'Good', 'Very Good', 'Premium', 'Ideal'],
-        'color': ['J', 'I', 'H', 'G', 'F', 'E', 'D'],
-        'clarity': ['I1', 'SI2', 'SI1', 'VS2', 'VS1', 'VVS2', 'VVS1', 'IF']
+        "cut": ["Fair", "Good", "Very Good", "Premium", "Ideal"],
+        "color": ["J", "I", "H", "G", "F", "E", "D"],
+        "clarity": ["I1", "SI2", "SI1", "VS2", "VS1", "VVS2", "VVS1", "IF"],
     }
     for feature, levels in categorical_features.items():
         df[feature] = HelperFuncs.ordinal_encode(df[feature], levels)
 
-    continuous_features = ['carat', 'x', 'y', 'z',
-                           'depth', 'table', 'cut', 'color', 'clarity']
-    df[continuous_features] = HelperFuncs.standardise(
-        df[continuous_features])
-    df[continuous_features] = HelperFuncs.normalise(
-        df[continuous_features])
+    continuous_features = [
+        "carat",
+        "x",
+        "y",
+        "z",
+        "depth",
+        "table",
+        "cut",
+        "color",
+        "clarity",
+    ]
+    df[continuous_features] = HelperFuncs.standardise(df[continuous_features])
+    df[continuous_features] = HelperFuncs.normalise(df[continuous_features])
 
     # Prepare data
-    MSE_list_custom, RMSE_list_custom, MAE_list_custom, R2_list_custom = [], [], [], []
-    X = df.drop(columns=['price'])
-    y = df['price']
+    X = df.drop(columns=["price"])
+    y = df["price"]
     k_range = range(1, 21)  # Generate k-values from 1 to 20
 
     # Split data
     X_train, X_test, y_train, y_test = HelperFuncs.train_test_split(
-        X, y, test_size=0.2, random_state=42)
+        X, y, test_size=0.2, random_state=42
+    )
 
     # Train KNN regressor, make predictions and evaluate the model for different k values.
     for k in tqdm(k_range):
@@ -58,5 +64,5 @@ def main():
     print("Predicted value:", y_pred_scalar)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

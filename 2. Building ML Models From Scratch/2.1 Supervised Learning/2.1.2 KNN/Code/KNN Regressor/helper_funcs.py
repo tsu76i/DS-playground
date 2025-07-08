@@ -15,8 +15,7 @@ class HelperFuncs:
         Returns:
             DataFrame with outliers removed from all numerical columns.
         """
-        numerical_columns = df.select_dtypes(
-            include=['float64', 'int64']).columns
+        numerical_columns = df.select_dtypes(include=["float64", "int64"]).columns
         for column in numerical_columns:
             Q1 = df[column].quantile(0.25)  # First quartile (25th percentile)
             Q3 = df[column].quantile(0.75)  # Third quartile (75th percentile)
@@ -30,7 +29,9 @@ class HelperFuncs:
 
         return df
 
-    def ordinal_encode(data: NDArray[np.str_], levels: NDArray[np.str_]) -> NDArray[np.int64]:
+    def ordinal_encode(
+        data: NDArray[np.str_], levels: NDArray[np.str_]
+    ) -> NDArray[np.int64]:
         """
         Perform ordinal encoding for a categorical feature.
 
@@ -72,8 +73,9 @@ class HelperFuncs:
         max_val = np.max(data, axis=0)
         return (data - min_val) / (max_val - min_val)
 
-    def train_test_split(X: pd.DataFrame, y: pd.Series, test_size: float = 0.2,
-                         random_state: int = None) -> Tuple[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series]:
+    def train_test_split(
+        X: pd.DataFrame, y: pd.Series, test_size: float = 0.2, random_state: int = None
+    ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series]:
         """
         Split arrays or matrices into random train and test subsets.
 
@@ -108,4 +110,9 @@ class HelperFuncs:
         train_indices: NDArray[np.int64] = indices[test_size:]
 
         # Return: X_train, X_test, y_train, y_test
-        return X.iloc[train_indices], X.iloc[test_indices], y.iloc[train_indices], y.iloc[test_indices]
+        return (
+            X.iloc[train_indices],
+            X.iloc[test_indices],
+            y.iloc[train_indices],
+            y.iloc[test_indices],
+        )

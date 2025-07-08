@@ -24,7 +24,7 @@ class HelperFuncs:
             distances = np.linalg.norm(X - X[i], axis=1)
             # Sort distances and select the k-th smallest (exclude self)
             sorted_dist = np.sort(distances)
-            k_distances[i] = sorted_dist[k-1]  # k-th neighbour (index k)
+            k_distances[i] = sorted_dist[k - 1]  # k-th neighbour (index k)
         return k_distances
 
     def find_optimal_params(X: pd.DataFrame) -> Tuple[float, int]:
@@ -41,16 +41,16 @@ class HelperFuncs:
         # Compute k-distances
         X = X.values
         dimensions = X.shape[1]
-        min_pts = dimensions*2
+        min_pts = dimensions * 2
         k_distances = HelperFuncs.compute_k_distances(X, min_pts)
         sorted_k_distances = np.sort(k_distances)
 
         # Plot k-distance graph
         plt.figure(figsize=(8, 6))
-        plt.plot(np.arange(len(sorted_k_distances)), sorted_k_distances, 'b-')
-        plt.xlabel('Points sorted by k-distance')
-        plt.ylabel(f'Distance to {min_pts}-th nearest neighbor')
-        plt.title('K-Distance Graph for Parameter Selection')
+        plt.plot(np.arange(len(sorted_k_distances)), sorted_k_distances, "b-")
+        plt.xlabel("Points sorted by k-distance")
+        plt.ylabel(f"Distance to {min_pts}-th nearest neighbor")
+        plt.title("K-Distance Graph for Parameter Selection")
         plt.grid(True)
         plt.tight_layout()
         plt.show()
@@ -69,18 +69,21 @@ class HelperFuncs:
         Args:
             X: DataFrame containing 'cluster_label' column and at least two features.
         """
-        for label in sorted(X['cluster_label'].unique()):
+        for label in sorted(X["cluster_label"].unique()):
             if label == -1:  # Noise points
                 plt.scatter(
-                    X.loc[X['cluster_label'] == -1, X.columns[0]],
-                    X.loc[X['cluster_label'] == -1, X.columns[1]],
-                    s=30, c='black', label='Noise'
+                    X.loc[X["cluster_label"] == -1, X.columns[0]],
+                    X.loc[X["cluster_label"] == -1, X.columns[1]],
+                    s=30,
+                    c="black",
+                    label="Noise",
                 )
             else:  # Cluster points
                 plt.scatter(
-                    X.loc[X['cluster_label'] == label, X.columns[0]],
-                    X.loc[X['cluster_label'] == label, X.columns[1]],
-                    s=30, label=f'Cluster {label}'
+                    X.loc[X["cluster_label"] == label, X.columns[0]],
+                    X.loc[X["cluster_label"] == label, X.columns[1]],
+                    s=30,
+                    label=f"Cluster {label}",
                 )
 
         plt.title("Clusters with Noise")

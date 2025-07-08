@@ -109,8 +109,7 @@ class VanillaNeuralNetwork:
 
         # Hidden layer error
         hidden_error = output_delta.dot(self.W2.T)
-        hidden_delta = hidden_error * \
-            self.sigmoid_derivative(self.hidden_output)
+        hidden_delta = hidden_error * self.sigmoid_derivative(self.hidden_output)
 
         # Update weights and biases
         self.W2 += self.hidden_output.T.dot(output_delta) * lr
@@ -132,7 +131,9 @@ class VanillaNeuralNetwork:
 
         return np.mean((y - y_hat) ** 2)
 
-    def train(self, X: NDArray[np.int64], y: NDArray[np.int64], epochs: int, lr: float) -> None:
+    def train(
+        self, X: NDArray[np.int64], y: NDArray[np.int64], epochs: int, lr: float
+    ) -> None:
         """
         Train the neural network using backpropagation for a specified number of epochs.
 
@@ -155,5 +156,9 @@ class VanillaNeuralNetwork:
             y_pred = self.forward(X)
             self.backward(X, y, lr)
             loss = self.mse(y, y_pred)
-            if epoch + 1 == 1 or (epoch + 1) % (epochs//10) == 0 or epoch + 1 == epochs:
+            if (
+                epoch + 1 == 1
+                or (epoch + 1) % (epochs // 10) == 0
+                or epoch + 1 == epochs
+            ):
                 print(f"Epoch {epoch + 1}/{epochs}, Loss: {loss:.4f}")

@@ -14,9 +14,18 @@ class CustomTSNE:
             Store the final embedding after calling fit_transform (shape: [n_samples, dim])
     """
 
-    def __init__(self, dim=2, perplexity=30.0, lr=200, max_iter=1000,
-                 early_exaggeration=4.0, exaggeration_iter=100,
-                 momentum=0.5, final_momentum=0.8, random_state=None) -> None:
+    def __init__(
+        self,
+        dim=2,
+        perplexity=30.0,
+        lr=200,
+        max_iter=1000,
+        early_exaggeration=4.0,
+        exaggeration_iter=100,
+        momentum=0.5,
+        final_momentum=0.8,
+        random_state=None,
+    ) -> None:
         """
         Initialise t-SNE parameters.
 
@@ -43,7 +52,9 @@ class CustomTSNE:
         self.random_state = random_state
         self.embedding_ = None
 
-    def _shannon_and_p_dist(self, D_i: NDArray[np.float64], beta: float) -> Tuple[float, NDArray[np.float64]]:
+    def _shannon_and_p_dist(
+        self, D_i: NDArray[np.float64], beta: float
+    ) -> Tuple[float, NDArray[np.float64]]:
         """
         Compute Shannon entropy and probability distribution with numerical stability.
 
@@ -65,9 +76,14 @@ class CustomTSNE:
             H = -np.sum(P * np.log2(P + 1e-10))
         return H, P
 
-    def _binary_search_beta(self, D_i: NDArray[np.float64], target_entropy: float,
-                            tol: float = 1e-5, max_iter: int = 50,
-                            initial_beta: float = 1.0) -> NDArray[np.float64]:
+    def _binary_search_beta(
+        self,
+        D_i: NDArray[np.float64],
+        target_entropy: float,
+        tol: float = 1e-5,
+        max_iter: int = 50,
+        initial_beta: float = 1.0,
+    ) -> NDArray[np.float64]:
         """
         Binary search for beta that produces target entropy.
 
@@ -123,15 +139,17 @@ class CustomTSNE:
         target_entropy = np.log2(self.perplexity)
 
         for i in range(n):
-            D_i = distances[i, np.concatenate((np.r_[0:i], np.r_[i+1:n]))]
+            D_i = distances[i, np.concatenate((np.r_[0:i], np.r_[i + 1 : n]))]
             proba_dist = self._binary_search_beta(D_i, target_entropy)
-            P[i, np.concatenate((np.r_[0:i], np.r_[i+1:n]))] = proba_dist
+            P[i, np.concatenate((np.r_[0:i], np.r_[i + 1 : n]))] = proba_dist
 
         P = (P + P.T) / (2 * n)
         P = np.maximum(P, 1e-12)
         return P
 
-    def _low_dimensional_affinities(self, Y: NDArray[np.float64]) -> Tuple[NDArray[np.float64], NDArray[np.float64]]:
+    def _low_dimensional_affinities(
+        self, Y: NDArray[np.float64]
+    ) -> Tuple[NDArray[np.float64], NDArray[np.float64]]:
         """
         Compute low-dimensional affinity matrix Q and distance matrix D.
 
@@ -149,8 +167,13 @@ class CustomTSNE:
         Q /= np.sum(Q)
         return Q, D
 
-    def _gradient(self, P: NDArray[np.float64], Q: NDArray[np.float64],
-                  Y: NDArray[np.float64], D: NDArray[np.float64]) -> NDArray[np.float64]:
+    def _gradient(
+        self,
+        P: NDArray[np.float64],
+        Q: NDArray[np.float64],
+        Y: NDArray[np.float64],
+        D: NDArray[np.float64],
+    ) -> NDArray[np.float64]:
         """
         Compute gradient of KL divergence.
 
@@ -166,8 +189,9 @@ class CustomTSNE:
         PQ = P - Q
         inv_distances = 1 / (1 + D)
         np.fill_diagonal(inv_distances, 0)
-        weighted_differences = np.expand_dims(
-            PQ * inv_distances, axis=2) * (Y[:, None, :] - Y[None, :, :])
+        weighted_differences = np.expand_dims(PQ * inv_distances, axis=2) * (
+            Y[:, None, :] - Y[None, :, :]
+        )
         return 4 * np.sum(weighted_differences, axis=1)
 
     def fit_transform(self, X: NDArray[np.float64]) -> NDArray[np.float64]:

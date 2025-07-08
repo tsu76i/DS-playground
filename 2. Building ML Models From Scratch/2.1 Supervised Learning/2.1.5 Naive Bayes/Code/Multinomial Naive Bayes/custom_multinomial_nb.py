@@ -45,7 +45,7 @@ class CustomMultinomialNB:
 
         self.feature_names_ = X.columns
         self.classes_ = y.unique().tolist()
-        self.priors_ = {cls: 1/len(self.classes_) for cls in self.classes_}
+        self.priors_ = {cls: 1 / len(self.classes_) for cls in self.classes_}
         self.likelihoods_ = self._calculate_likelihoods(X, y)
         self.log_likelihoods_ = np.log(self.likelihoods_.values)
 
@@ -96,6 +96,7 @@ class CustomMultinomialNB:
         vocab_size = len(X.columns)
 
         numerator = class_totals + self.alpha
-        denominator = total_words_per_class.values[:,
-                                                   np.newaxis] + vocab_size * self.alpha
+        denominator = (
+            total_words_per_class.values[:, np.newaxis] + vocab_size * self.alpha
+        )
         return numerator / denominator

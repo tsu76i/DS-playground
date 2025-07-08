@@ -1,7 +1,5 @@
 import numpy as np
-import matplotlib.pyplot as plt
-import pandas as pd
-from typing import Tuple, Dict, Any
+from typing import Dict, Any
 from numpy.typing import NDArray
 from custom_ridge_regression import CustomRidgeRegression
 
@@ -21,8 +19,15 @@ class HelperFuncs:
         X_std = np.std(X)
         return (X - X_mean) / X_std
 
-    def cross_validate_ridge(X: NDArray[np.float64], y: NDArray[np.float64], lambdas: list, k: int = 5,
-                             alpha: float = 0.001, epochs: int = 20000, random_state: int = 42) -> Dict[str, Any]:
+    def cross_validate_ridge(
+        X: NDArray[np.float64],
+        y: NDArray[np.float64],
+        lambdas: list,
+        k: int = 5,
+        alpha: float = 0.001,
+        epochs: int = 20000,
+        random_state: int = 42,
+    ) -> Dict[str, Any]:
         """
         Perform k-fold cross-validation for CustomRidgeRegression over a grid of lambda values.
 
@@ -42,7 +47,7 @@ class HelperFuncs:
         indices = np.arange(len(y))
         np.random.shuffle(indices)
         fold_sizes = np.full(k, len(y) // k, dtype=int)  # Split equally
-        fold_sizes[:len(y) % k] += 1  # Distibute remainder
+        fold_sizes[: len(y) % k] += 1  # Distibute remainder
         current = 0
         folds = []
         for fold_size in fold_sizes:  # Split randomised indices into k folds
@@ -62,7 +67,8 @@ class HelperFuncs:
                 X_val, y_val = X[val_idx], y[val_idx]
 
                 model = CustomRidgeRegression(
-                    w=0, b=0, alpha=alpha, epochs=epochs, lambda_=lambda_)
+                    w=0, b=0, alpha=alpha, epochs=epochs, lambda_=lambda_
+                )
                 model.train(X_train, y_train)
                 y_pred = model.predict(X_val)
                 mse = np.mean((y_val - y_pred) ** 2)

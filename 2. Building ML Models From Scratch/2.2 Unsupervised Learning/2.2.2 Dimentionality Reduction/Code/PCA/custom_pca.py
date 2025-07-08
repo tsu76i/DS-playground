@@ -46,8 +46,8 @@ class CustomPCA:
 
         # Sort eigenvalues and eigenvectors in descending order
         sorted_idx = np.argsort(eigenvalues)[::-1]
-        self.eigenvalues = eigenvalues[sorted_idx][:self.n_components]
-        self.components = eigenvectors[:, sorted_idx][:, :self.n_components]
+        self.eigenvalues = eigenvalues[sorted_idx][: self.n_components]
+        self.components = eigenvectors[:, sorted_idx][:, : self.n_components]
 
     def transform(self, X_standardised: NDArray[np.float64]) -> NDArray[np.float64]:
         """
@@ -72,8 +72,7 @@ class CustomPCA:
             Explained variance ratio for each component.
         """
         if self.eigenvalues is None:
-            raise ValueError(
-                'Fit the model before accessing explained_variance_ratio.')
+            raise ValueError("Fit the model before accessing explained_variance_ratio.")
         return self.eigenvalues / np.sum(self.all_eigenvalues)
 
     @property
@@ -86,5 +85,6 @@ class CustomPCA:
         """
         if self.eigenvalues is None:
             raise ValueError(
-                'Fit the model before accessing cumulative_explained_variance.')
+                "Fit the model before accessing cumulative_explained_variance."
+            )
         return np.cumsum(self.explained_variance_ratio)

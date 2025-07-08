@@ -5,8 +5,9 @@ from numpy.typing import NDArray
 
 
 class HelperFuncs:
-    def train_test_split(X: pd.DataFrame, y: pd.Series, test_size: float = 0.2,
-                         random_state: int = None) -> Tuple[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series]:
+    def train_test_split(
+        X: pd.DataFrame, y: pd.Series, test_size: float = 0.2, random_state: int = None
+    ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series]:
         """
         Split arrays or matrices into random train and test subsets.
 
@@ -41,4 +42,9 @@ class HelperFuncs:
         train_indices: NDArray[np.int64] = indices[test_size:]
 
         # Return: X_train, X_test, y_train, y_test
-        return X.iloc[train_indices], X.iloc[test_indices], y.iloc[train_indices], y.iloc[test_indices]
+        return (
+            X.iloc[train_indices],
+            X.iloc[test_indices],
+            y.iloc[train_indices],
+            y.iloc[test_indices],
+        )

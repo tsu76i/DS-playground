@@ -1,11 +1,17 @@
 import numpy as np
 from numpy.typing import NDArray
 from typing import List, Dict, Tuple
+
 HistoryType = List[Dict[str, NDArray[np.float64] | NDArray[np.int64]]]
 
 
 class KMeansMetrics:
-    def __init__(self, X: NDArray[np.float64], labels: NDArray[np.int64], centroids: NDArray[np.float64]) -> None:
+    def __init__(
+        self,
+        X: NDArray[np.float64],
+        labels: NDArray[np.int64],
+        centroids: NDArray[np.float64],
+    ) -> None:
         """
         Initialise the KMeansMetrics instance.
 

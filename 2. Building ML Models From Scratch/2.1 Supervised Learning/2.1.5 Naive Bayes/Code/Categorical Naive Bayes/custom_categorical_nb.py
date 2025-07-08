@@ -62,7 +62,7 @@ class CustomCategoricalNB:
             ValueError: If model hasn't been fitted.
         """
         if self.priors_ is None or self.likelihoods_ is None:
-            raise ValueError('Model not fitted. Call .fit() first.')
+            raise ValueError("Model not fitted. Call .fit() first.")
 
         predictions = []
         for row in X.itertuples(index=False):
@@ -82,7 +82,9 @@ class CustomCategoricalNB:
         """
         return y.value_counts(normalize=True).to_dict()
 
-    def _calculate_likelihoods(self, X: pd.DataFrame, y: pd.Series) -> Dict[str, Dict[str, Dict[str, float]]]:
+    def _calculate_likelihoods(
+        self, X: pd.DataFrame, y: pd.Series
+    ) -> Dict[str, Dict[str, Dict[str, float]]]:
         """
         Calculate conditional probabilities for feature values given each class.
 
@@ -109,11 +111,13 @@ class CustomCategoricalNB:
                 value_counts = class_subset[feature].value_counts()
 
                 # All features values are included, even if missing in subset
-                value_counts = value_counts.reindex(
-                    unique_features, fill_value=0)
+                value_counts = value_counts.reindex(unique_features, fill_value=0)
 
-                probas = round((value_counts + self.alpha) /
-                               (total + len(unique_features) + self.alpha), 4)
+                probas = round(
+                    (value_counts + self.alpha)
+                    / (total + len(unique_features) + self.alpha),
+                    4,
+                )
 
                 likelihoods[feature][c] = probas.to_dict()
 

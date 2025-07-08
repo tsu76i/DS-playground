@@ -66,7 +66,7 @@ class CustomBernoulliNB:
             ValueError: If model hasn't been fitted.
         """
         if self.priors_ is None or self.likelihoods_ is None:
-            raise ValueError('Model not fitted. Call .fit() first.')
+            raise ValueError("Model not fitted. Call .fit() first.")
 
         predictions = []
         for row in X.itertuples(index=False):
@@ -86,7 +86,9 @@ class CustomBernoulliNB:
         """
         return y.value_counts(normalize=True).to_dict()
 
-    def _calculate_likelihoods(self, X: pd.DataFrame, y: pd.Series) -> Dict[str, Dict[int, Dict[int, float]]]:
+    def _calculate_likelihoods(
+        self, X: pd.DataFrame, y: pd.Series
+    ) -> Dict[str, Dict[int, Dict[int, float]]]:
         """
         Calculate conditional probabilities for feature values given each class.
 
@@ -105,7 +107,7 @@ class CustomBernoulliNB:
 
             for class_label in self.classes_:
                 c = int(class_label)
-                class_mask = (y == c)
+                class_mask = y == c
                 class_subset = X.loc[class_mask, feature]
                 total_in_class = class_mask.sum()  # Number of samples in class
 
@@ -115,15 +117,13 @@ class CustomBernoulliNB:
 
                 # Apply Laplace smoothing for binary features
                 # Denominator: total_in_class + 2 * alpha (for two possible values)
-                prob_1 = (count_1 + self.alpha) / \
-                    (total_in_class + 2 * self.alpha)
-                prob_0 = (count_0 + self.alpha) / \
-                    (total_in_class + 2 * self.alpha)
+                prob_1 = (count_1 + self.alpha) / (total_in_class + 2 * self.alpha)
+                prob_0 = (count_0 + self.alpha) / (total_in_class + 2 * self.alpha)
 
                 # Store probabilities for both values
                 likelihoods[feature][c] = {
                     0: round(float(prob_0), 4),
-                    1: round(float(prob_1), 4)
+                    1: round(float(prob_1), 4),
                 }
 
         return likelihoods

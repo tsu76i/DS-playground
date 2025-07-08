@@ -2,15 +2,15 @@ from numpy.typing import NDArray
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-import seaborn as sns
-from numpy.typing import NDArray
 from typing import List, Dict, Tuple
+
 HistoryType = List[Dict[str, NDArray[np.float64] | NDArray[np.int64]]]
 
 
 class HelperFuncs:
-    def train_test_split(X: NDArray, y: NDArray, test_size: float = 0.2,
-                         random_state: int = None) -> Tuple[NDArray, NDArray, NDArray, NDArray]:
+    def train_test_split(
+        X: NDArray, y: NDArray, test_size: float = 0.2, random_state: int = None
+    ) -> Tuple[NDArray, NDArray, NDArray, NDArray]:
         """
         Split arrays or matrices into random train and test subsets.
 
@@ -47,8 +47,13 @@ class HelperFuncs:
         # Return: X_train, X_test, y_train, y_test
         return X[train_indices], X[test_indices], y[train_indices], y[test_indices]
 
-    def plot_kmeans_clusters(df: pd.DataFrame, features: List[str], clusters_list: List[NDArray[np.int64]],
-                             centroids_list: List[NDArray[np.float64]], palette: List[str]) -> None:
+    def plot_kmeans_clusters(
+        df: pd.DataFrame,
+        features: List[str],
+        clusters_list: List[NDArray[np.int64]],
+        centroids_list: List[NDArray[np.float64]],
+        palette: List[str],
+    ) -> None:
         """
         Plot K-Means clustered data with centroids for given features.
 
@@ -60,8 +65,7 @@ class HelperFuncs:
             - palette: Seaborn colour palette for cluster colours.
         """
         colors = palette.as_hex()
-        fig, axes = plt.subplots(
-            1, len(features), figsize=(6 * len(features), 6))
+        fig, axes = plt.subplots(1, len(features), figsize=(6 * len(features), 6))
 
         # Handle single subplot case
         if len(features) == 1:
@@ -80,26 +84,43 @@ class HelperFuncs:
             # Create scatter plot with cluster colours
             for cluster_id in range(len(centroids)):
                 mask = clusters == cluster_id
-                axes[i].scatter(df.loc[mask, x_col], df.loc[mask, y_col],
-                                c=[colors[cluster_id]], s=60, alpha=0.7,
-                                label=f'Cluster {cluster_id}')
+                axes[i].scatter(
+                    df.loc[mask, x_col],
+                    df.loc[mask, y_col],
+                    c=[colors[cluster_id]],
+                    s=60,
+                    alpha=0.7,
+                    label=f"Cluster {cluster_id}",
+                )
 
             # Plot centroids
             for j, (x, y) in enumerate(centroids):
-                axes[i].scatter(x, y, color=colors[j], marker='*', s=150,
-                                edgecolor='black', linewidth=1.5,
-                                label=f'Centroid {j}')
+                axes[i].scatter(
+                    x,
+                    y,
+                    color=colors[j],
+                    marker="*",
+                    s=150,
+                    edgecolor="black",
+                    linewidth=1.5,
+                    label=f"Centroid {j}",
+                )
 
-            axes[i].set_title(f'{feature.title()} Length vs Width (Clustered)')
-            axes[i].set_xlabel(f'{feature.title()} Length (cm)')
-            axes[i].set_ylabel(f'{feature.title()} Width (cm)')
+            axes[i].set_title(f"{feature.title()} Length vs Width (Clustered)")
+            axes[i].set_xlabel(f"{feature.title()} Length (cm)")
+            axes[i].set_ylabel(f"{feature.title()} Width (cm)")
             axes[i].legend()
 
         plt.tight_layout()
         plt.show()
 
-    def plot_kmeans_transitions(X: NDArray[np.float64], history: HistoryType, title: str,
-                                palette: List[str], steps: int) -> None:
+    def plot_kmeans_transitions(
+        X: NDArray[np.float64],
+        history: HistoryType,
+        title: str,
+        palette: List[str],
+        steps: int,
+    ) -> None:
         """
         Visualise the progression of K-Means clustering through iterations.
 
@@ -118,27 +139,41 @@ class HelperFuncs:
 
         for ax, idx in zip(axes, indices):
             data = history[idx]
-            centroids = data['centroids']
-            labels = data['labels']
+            centroids = data["centroids"]
+            labels = data["labels"]
 
             # When n_iter_ = 0 (before assigning points to clusters)
             if labels is None:
-                ax.scatter(X[:, 0], X[:, 1], color='gray', s=40, alpha=0.6)
+                ax.scatter(X[:, 0], X[:, 1], color="gray", s=40, alpha=0.6)
 
             # When n_iter_ > 0
             else:
                 for j, color in enumerate(colors):
                     points = X[labels == j]
-                    ax.scatter(points[:, 0], points[:, 1], color=color,
-                               s=40, alpha=0.8, label=f'Cluster {j}')
+                    ax.scatter(
+                        points[:, 0],
+                        points[:, 1],
+                        color=color,
+                        s=40,
+                        alpha=0.8,
+                        label=f"Cluster {j}",
+                    )
 
             for j, (x, y) in enumerate(centroids):
-                ax.scatter(x, y, color=colors[j], marker='*', s=150,
-                           edgecolor='black', linewidth=1.5, label=f'Centroid {j}')
+                ax.scatter(
+                    x,
+                    y,
+                    color=colors[j],
+                    marker="*",
+                    s=150,
+                    edgecolor="black",
+                    linewidth=1.5,
+                    label=f"Centroid {j}",
+                )
 
-            ax.set_title(f'Iteration {idx}')
-            ax.set_xlabel('Length (cm)')
-            ax.set_ylabel('Width (cm)')
+            ax.set_title(f"Iteration {idx}")
+            ax.set_xlabel("Length (cm)")
+            ax.set_ylabel("Width (cm)")
             ax.set_xlim(X[:, 0].min() - 0.5, X[:, 0].max() + 0.5)
             ax.set_ylim(X[:, 1].min() - 0.5, X[:, 1].max() + 0.5)
 
@@ -155,15 +190,14 @@ class HelperFuncs:
             wcss_values: Corresponding WCSS values.
         """
         plt.figure(figsize=(10, 6))
-        plt.plot(k_values, wcss_values, 'bo-', linewidth=2, markersize=8)
-        plt.xlabel('Number of Clusters (k)')
-        plt.ylabel('Within-Cluster Sum of Squares (WCSS)')
-        plt.title('Elbow Method for Optimal k')
+        plt.plot(k_values, wcss_values, "bo-", linewidth=2, markersize=8)
+        plt.xlabel("Number of Clusters (k)")
+        plt.ylabel("Within-Cluster Sum of Squares (WCSS)")
+        plt.title("Elbow Method for Optimal k")
         plt.grid(True, alpha=0.3)
 
         # Highlight the potential elbow point
         if len(wcss_values) > 2:
-
             # Second derivative
             d_2 = np.diff(wcss_values, 2)
 
@@ -171,16 +205,25 @@ class HelperFuncs:
             # +2 because diff reduces length twice
             elbow_idx = np.argmax(d_2) + 2
             if elbow_idx < len(k_values):
-                plt.axvline(x=k_values[elbow_idx], color='red', linestyle='--',
-                            label=f'Potential Elbow at k={k_values[elbow_idx]}')
+                plt.axvline(
+                    x=k_values[elbow_idx],
+                    color="red",
+                    linestyle="--",
+                    label=f"Potential Elbow at k={k_values[elbow_idx]}",
+                )
                 plt.legend()
             else:
-                print('Elbow point could not be reliably determined.')
+                print("Elbow point could not be reliably determined.")
         else:
-            print('Insufficient data points to determine an elbow point.')
+            print("Insufficient data points to determine an elbow point.")
         plt.show()
 
-    def plot_evaluation_metrics(k_values: List[int], wcss_list: List[float], bcss_list: List[float], tss_list: List[float]) -> None:
+    def plot_evaluation_metrics(
+        k_values: List[int],
+        wcss_list: List[float],
+        bcss_list: List[float],
+        tss_list: List[float],
+    ) -> None:
         """
         Plot WCSS, BCSS, and TSS metrics against k values.
 
@@ -192,14 +235,13 @@ class HelperFuncs:
         """
         fig, axes = plt.subplots(1, 3, figsize=(18, 5))  # 3 subplots in 1 row
         metrics_list = wcss_list, bcss_list, tss_list
-        metrics_name = ['WCSS', 'BCSS', 'TSS']
-        colors = ['blue', 'green', 'red']
+        metrics_name = ["WCSS", "BCSS", "TSS"]
+        colors = ["blue", "green", "red"]
 
         for i, (metric, name) in enumerate(zip(metrics_list, metrics_name)):
-            axes[i].plot(k_values, metric, marker='o',
-                         label=name, color=colors[i])
-            axes[i].set_title(f'{name} vs k')
-            axes[i].set_xlabel('Number of Clusters (k)')
+            axes[i].plot(k_values, metric, marker="o", label=name, color=colors[i])
+            axes[i].set_title(f"{name} vs k")
+            axes[i].set_xlabel("Number of Clusters (k)")
             axes[i].set_ylabel(name)
             axes[i].grid(True)
             axes[i].legend()
@@ -207,12 +249,16 @@ class HelperFuncs:
         plt.tight_layout()
         plt.show()
 
-    def plot_results(X: NDArray[np.float64], labels: List[int], centroids: List[float],
-                     title: str, palette: List[str]) -> None:
-
+    def plot_results(
+        X: NDArray[np.float64],
+        labels: List[int],
+        centroids: List[float],
+        title: str,
+        palette: List[str],
+    ) -> None:
         # For consistency of cluster colours
         colors = palette.as_hex()
-        methods = ['KMeans', 'KMeans++']
+        methods = ["KMeans", "KMeans++"]
         fig, axes = plt.subplots(1, 2, figsize=(12, 6))
 
         # Iterate over 2 axes and their corresponding cluster results
@@ -223,18 +269,30 @@ class HelperFuncs:
             # Scatter data points and centroids
             for cluster in np.unique(label):  # Unique cluster ID
                 # Select points in the current cluster
-                cluster_mask = (label == cluster)
+                cluster_mask = label == cluster
                 cluster_color = colors[cluster]  # Assign a unique colour
 
                 # Data points in the current cluster
-                ax.scatter(X[cluster_mask, 0], X[cluster_mask, 1],
-                           color=cluster_color, s=30, alpha=0.6, label=f'Cluster {cluster}')
+                ax.scatter(
+                    X[cluster_mask, 0],
+                    X[cluster_mask, 1],
+                    color=cluster_color,
+                    s=30,
+                    alpha=0.6,
+                    label=f"Cluster {cluster}",
+                )
 
                 # Centroid in the current cluster
-                ax.scatter(centroid[cluster, 0], centroid[cluster, 1],
-                           color=cluster_color, edgecolor='black', marker='*', s=200)
+                ax.scatter(
+                    centroid[cluster, 0],
+                    centroid[cluster, 1],
+                    color=cluster_color,
+                    edgecolor="black",
+                    marker="*",
+                    s=200,
+                )
 
-            ax.set_title(f'{methods[i]} Clustering ({title})')
+            ax.set_title(f"{methods[i]} Clustering ({title})")
             ax.legend()
 
         # Adjust layout and display

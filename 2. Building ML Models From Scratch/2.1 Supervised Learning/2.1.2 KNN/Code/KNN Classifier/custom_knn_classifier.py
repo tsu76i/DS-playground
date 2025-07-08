@@ -14,7 +14,7 @@ class CustomKNNClassifier:
         """
         Initialise the model with k, the number of neighbours.
 
-        Args: 
+        Args:
             k: The number of nearest neighbours to consider for classification. default = 3.
         """
         self.k = k
@@ -43,8 +43,9 @@ class CustomKNNClassifier:
         unique_labels, counts = np.unique(labels_row, return_counts=True)
         return unique_labels[np.argmax(counts)]  # Most frequent labels
 
-    def predict(self, X_test: pd.DataFrame) -> (
-            Tuple[str, NDArray[np.int64], NDArray[np.str_]] | NDArray[np.str_]):
+    def predict(
+        self, X_test: pd.DataFrame
+    ) -> Tuple[str, NDArray[np.int64], NDArray[np.str_]] | NDArray[np.str_]:
         """
         Predicts the labels for the given test data.
 
@@ -66,19 +67,25 @@ class CustomKNNClassifier:
         X_test = X_test.reshape(1, -1) if is_single_sample else X_test
 
         # Calculate Euclidean distances
-        distances = cdist(X_test, self.X_train, metric='euclidean')
+        distances = cdist(X_test, self.X_train, metric="euclidean")
 
         # Identify the indices of k-neighbours
-        k_neighbours_idx = np.argpartition(
-            distances, kth=self.k-1, axis=1)[:, :self.k]
+        k_neighbours_idx = np.argpartition(distances, kth=self.k - 1, axis=1)[
+            :, : self.k
+        ]
 
         # Identify the labels of k-neighbours
         k_neighbours_labels = self.y_train[k_neighbours_idx]
 
         if is_single_sample:
             most_common = self.majority_vote(k_neighbours_labels.flatten())
-            return most_common, k_neighbours_idx.flatten(), k_neighbours_labels.flatten()
+            return (
+                most_common,
+                k_neighbours_idx.flatten(),
+                k_neighbours_labels.flatten(),
+            )
 
-        predictions = np.array([self.majority_vote(labels)
-                               for labels in k_neighbours_labels])
+        predictions = np.array(
+            [self.majority_vote(labels) for labels in k_neighbours_labels]
+        )
         return predictions

@@ -4,7 +4,9 @@ from typing import Tuple
 
 
 class HelperFuncs:
-    def preprocess_data(images: NDArray[np.int64], labels: NDArray[np.int64]) -> Tuple[NDArray[np.float64], NDArray[np.int64]]:
+    def preprocess_data(
+        images: NDArray[np.int64], labels: NDArray[np.int64]
+    ) -> Tuple[NDArray[np.float64], NDArray[np.int64]]:
         """
         Preprocess image and label data for neural network training.
 
@@ -41,7 +43,9 @@ class HelperFuncs:
         exp = np.exp(x - np.max(x, axis=1, keepdims=True))
         return exp / np.sum(exp, axis=1, keepdims=True)
 
-    def cross_entropy_loss(y_pred: NDArray[np.float64], y_true: NDArray[np.float64]) -> NDArray[np.float64]:
+    def cross_entropy_loss(
+        y_pred: NDArray[np.float64], y_true: NDArray[np.float64]
+    ) -> NDArray[np.float64]:
         """
         Compute categorical cross-entropy loss.
 
@@ -56,7 +60,9 @@ class HelperFuncs:
         log_probs = -np.log(y_pred[range(m), np.argmax(y_true, axis=1)])
         return np.sum(log_probs) / m
 
-    def accuracy(y_pred: NDArray[np.int64], y_true: NDArray[np.int64]) -> NDArray[np.float64]:
+    def accuracy(
+        y_pred: NDArray[np.int64], y_true: NDArray[np.int64]
+    ) -> NDArray[np.float64]:
         """
         Compute classification accuracy.
 

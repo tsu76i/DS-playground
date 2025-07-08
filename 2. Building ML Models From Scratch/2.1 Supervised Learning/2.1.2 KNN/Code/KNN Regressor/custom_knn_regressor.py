@@ -13,7 +13,7 @@ class CustomKNNRegressor:
         """
         Initialise the model with k, the number of neighbours.
 
-        Args: 
+        Args:
             k: The number of nearest neighbours to consider for classification. default = 3.
         """
         self.k = k
@@ -46,10 +46,10 @@ class CustomKNNRegressor:
 
         # Compute distances
         # ! Use scipy library for faster computation of Euclidean distance
-        distances = cdist(X_test, self.X_train, metric='euclidean')
+        distances = cdist(X_test, self.X_train, metric="euclidean")
 
         # Find indices of k nearest neighbours for each test sample
-        idx = np.argpartition(distances, kth=self.k-1, axis=1)[:, :self.k]
+        idx = np.argpartition(distances, kth=self.k - 1, axis=1)[:, : self.k]
 
         # Gather the corresponding y_train values and compute their mean
         predictions = np.mean(self.y_train[idx], axis=1)

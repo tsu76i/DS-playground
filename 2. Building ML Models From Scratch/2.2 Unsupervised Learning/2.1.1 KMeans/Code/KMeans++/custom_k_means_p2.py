@@ -1,6 +1,7 @@
 import numpy as np
 from numpy.typing import NDArray
 from typing import List, Dict, Optional
+
 HistoryType = List[Dict[str, NDArray[np.float64] | NDArray[np.int64]]]
 
 
@@ -20,7 +21,14 @@ class CustomKMeansP2:
         - n_iter_: Number of iterations performed.
     """
 
-    def __init__(self, n_clusters: int, max_iters: int = 100, tol: float = 1e-4, random_state: int = 42, disp_conv=False) -> None:
+    def __init__(
+        self,
+        n_clusters: int,
+        max_iters: int = 100,
+        tol: float = 1e-4,
+        random_state: int = 42,
+        disp_conv=False,
+    ) -> None:
         """
         Initialise the K-Means model with specified parameters.
 
@@ -41,7 +49,9 @@ class CustomKMeansP2:
         self.disp_conv = disp_conv
         self.n_iter_ = 0
 
-    def _calculate_euclidean(self, X: NDArray[np.float64], centroids: NDArray[np.float64]) -> NDArray[np.float64]:
+    def _calculate_euclidean(
+        self, X: NDArray[np.float64], centroids: NDArray[np.float64]
+    ) -> NDArray[np.float64]:
         """
         Calculate the distance between each data point and cluster centroid.
 
@@ -71,20 +81,22 @@ class CustomKMeansP2:
 
         # Step 2: Select the remaining centroids
         for _ in range(1, self.n_clusters):
-
             # Compute the squared distance from each point to the closest centroid
-            distances = np.min(self._calculate_euclidean(
-                X, np.array(centroids)), axis=1)
+            distances = np.min(
+                self._calculate_euclidean(X, np.array(centroids)), axis=1
+            )
 
             # Compute probabilities proportional to the squared distances
-            probs = distances ** 2 / np.sum(distances ** 2)
+            probs = distances**2 / np.sum(distances**2)
 
             # Select the next centroid based on the probability distribution
             next_centroid_idx = self.rng.choice(len(X), p=probs)
             centroids.append(X[next_centroid_idx])
         return np.array(centroids)
 
-    def _update_centroids(self, X: NDArray[np.float64], labels: NDArray[np.int64]) -> NDArray[np.float64]:
+    def _update_centroids(
+        self, X: NDArray[np.float64], labels: NDArray[np.int64]
+    ) -> NDArray[np.float64]:
         """
         Update the centroids based on the mean of data points in each cluster.
 
@@ -130,7 +142,7 @@ class CustomKMeansP2:
             - Fitted KMeans instance.
         """
         self.centroids = self._initialise_centroids(X)
-        self.history = [{'centroids': self.centroids.copy(), 'labels': None}]
+        self.history = [{"centroids": self.centroids.copy(), "labels": None}]
 
         for self.n_iter_ in range(1, self.max_iters + 1):
             distances = self._calculate_euclidean(X, self.centroids)
@@ -138,15 +150,13 @@ class CustomKMeansP2:
             new_centroids = self._update_centroids(X, labels)
 
             # Store both centroids AND labels at each iteration
-            self.history.append({
-                'centroids': new_centroids.copy(),
-                'labels': labels.copy()
-            })
+            self.history.append(
+                {"centroids": new_centroids.copy(), "labels": labels.copy()}
+            )
 
             if self._is_converged(self.centroids, new_centroids):
                 if self.disp_conv:
-                    print(
-                        f'KMeans++: Converged after {self.n_iter_} iterations.')
+                    print(f"KMeans++: Converged after {self.n_iter_} iterations.")
                 break
 
             self.centroids = new_centroids
@@ -164,5 +174,5 @@ class CustomKMeansP2:
             - Assigned cluster labels, shape (n_samples,).
         """
         if self.centroids is None:
-            raise ValueError('Model not fitted. Call fit() first.')
+            raise ValueError("Model not fitted. Call fit() first.")
         return np.argmin(self._calculate_euclidean(X, self.centroids), axis=1)

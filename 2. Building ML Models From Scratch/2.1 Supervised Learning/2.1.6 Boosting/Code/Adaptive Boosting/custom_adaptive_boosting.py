@@ -37,7 +37,7 @@ class CustomAdaBoost:
 
         for _ in range(self.n_weak_learners):
             stump = DecisionStump()
-            min_error = float('inf')
+            min_error = float("inf")
 
             # Find the best decision stump
             for feature_index in range(n_features):
@@ -83,7 +83,6 @@ class CustomAdaBoost:
         Returns:
             Predicted class labels (+1 or -1) of shape (n_samples,).
         """
-        weighted_preds = [clf.alpha *
-                          clf.predict(X) for clf in self.classifiers]
+        weighted_preds = [clf.alpha * clf.predict(X) for clf in self.classifiers]
         y_pred = np.sum(weighted_preds, axis=0)
         return np.sign(y_pred)

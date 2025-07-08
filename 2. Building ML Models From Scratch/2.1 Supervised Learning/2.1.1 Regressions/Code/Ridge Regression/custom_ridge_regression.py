@@ -7,8 +7,14 @@ class CustomRidgeRegression:
     A simple implementation of Ridge Regression using gradient descent.
     """
 
-    def __init__(self, w: float = 0.0, b: float = 0.0,
-                 alpha: float = 0.001, epochs: int = 20000, lambda_: float = 1.0) -> None:
+    def __init__(
+        self,
+        w: float = 0.0,
+        b: float = 0.0,
+        alpha: float = 0.001,
+        epochs: int = 20000,
+        lambda_: float = 1.0,
+    ) -> None:
         """
         Initialise the CustomRidgeRegression instance with given hyperparameters.
 
@@ -38,7 +44,9 @@ class CustomRidgeRegression:
         """
         return self.w * X + self.b
 
-    def calculate_loss_ridge(self, y: NDArray[np.float64], y_pred: NDArray[np.float64]) -> float:
+    def calculate_loss_ridge(
+        self, y: NDArray[np.float64], y_pred: NDArray[np.float64]
+    ) -> float:
         """
         Calculate Ridge Loss function (MSE + L2 penalty).
 
@@ -50,7 +58,7 @@ class CustomRidgeRegression:
             MSE + L2 penalty.
         """
         mse = np.mean((y - y_pred) ** 2)
-        l2_penalty = self.lambda_ * (self.w ** 2)
+        l2_penalty = self.lambda_ * (self.w**2)
         return mse + l2_penalty
 
     def gradient_descent(self, X: NDArray[np.float64], y: NDArray[np.float64]) -> None:
@@ -68,8 +76,7 @@ class CustomRidgeRegression:
             loss = self.calculate_loss_ridge(y, y_pred)
             self.loss_history.append(loss)
 
-            dL_dw = -(2 / n) * np.sum(X * (y - y_pred)) + \
-                2 * self.lambda_ * self.w
+            dL_dw = -(2 / n) * np.sum(X * (y - y_pred)) + 2 * self.lambda_ * self.w
             dL_db = -(2 / n) * np.sum(y - y_pred)
 
             self.w -= self.alpha * dL_dw
@@ -84,5 +91,4 @@ class CustomRidgeRegression:
             y: True output values.
         """
         self.gradient_descent(X, y)
-        print(
-            f"Training completed. Coefficient: {self.w:.5f}, Intercept: {self.b:.5f}")
+        print(f"Training completed. Coefficient: {self.w:.5f}, Intercept: {self.b:.5f}")

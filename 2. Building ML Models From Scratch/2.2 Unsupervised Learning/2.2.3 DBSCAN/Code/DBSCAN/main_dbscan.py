@@ -8,9 +8,14 @@ from dbscan_metrics import DBSCANMetrics
 
 def main():
     # Load data
-    X, y = make_blobs(n_samples=500, centers=3, cluster_std=1.4,
-                      #   c=y, cmap="viridis",
-                      n_features=2, random_state=42)
+    X, y = make_blobs(
+        n_samples=500,
+        centers=3,
+        cluster_std=1.4,
+        #   c=y, cmap="viridis",
+        n_features=2,
+        random_state=42,
+    )
 
     # Normalise X
     scaler = MinMaxScaler()
@@ -25,7 +30,7 @@ def main():
 
     # Perform clustering
     predicted_labels = dbscan.fit_predict(X)
-    X['cluster_label'] = predicted_labels
+    X["cluster_label"] = predicted_labels
 
     # Visualise clusters
     HelperFuncs.visualise_clusters(X)
@@ -38,5 +43,5 @@ def main():
     print(f" - Clusters (Custom): {metrics['n_clusters']}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
