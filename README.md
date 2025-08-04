@@ -4,13 +4,13 @@
 # Data Science Playground
 
 <!-- GITHUB STATUS BEGIN -->
-![Created At](https://img.shields.io/github/created-at/tsu76i/DS_playground)
-![Last Commit](https://img.shields.io/github/last-commit/tsu76i/DS_playground)
+![Created At](https://img.shields.io/github/created-at/tsu76i/DS-playground)
+![Last Commit](https://img.shields.io/github/last-commit/tsu76i/DS-playground)
 <!-- GITHUB STATUS END -->
 
 <!-- CONTACT LINKS BEGIN -->
 [![LinkedIn](https://custom-icon-badges.demolab.com/badge/LinkedIn-0A66C2?logo=linkedin-white&logoColor=fff)](https://www.linkedin.com/in/tsu76i/)
-[![GitHub](https://img.shields.io/badge/GitHub-%23121011.svg?logo=github&logoColor=white)]([#](https://github.com/tsu76i))
+[![GitHub](https://img.shields.io/badge/GitHub-%23121011.svg?logo=github&logoColor=white)](https://github.com/tsu76i)
 [![Gmail](https://img.shields.io/badge/Gmail-D14836?logo=gmail&logoColor=white)](mailto:tsu76i.pm@gmail.com)
 <!-- CONTACT LINKS BEGIN -->
 
