@@ -283,7 +283,7 @@ This is a personal project, but feedback, suggestions, and collaborations are we
 <!-- LICENSE BEGIN -->
 ## 📜 License
 
-This project is licensed under the MIT License. See the [LICENSE](/LICENSE.txt) file for details.
+This project is licensed under the MIT License. See the [LICENSE](https://github.com/tsu76i/DS-playground/blob/main/LICENSE) file for details.
 
 <p align="right"><a href="#top">[↑ Top]</a></p>
 <!-- LICENSE END -->
