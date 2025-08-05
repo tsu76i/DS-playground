@@ -248,9 +248,10 @@ Apply concepts to practical challenges:
 
 ### [3.4 NLP](https://github.com/tsu76i/DS-playground/tree/main/3.%20Practical%20Exercises/3.4%20NLP)
 - Basic NLP Concepts
-- Named Entity Recognition
 - Parsing
 - Word Embeddings
+- Sentiment Analysis
+<!-- - Named Entity Recognition -->
 
 <a id='llms'></a>
 
