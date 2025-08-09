@@ -250,7 +250,8 @@ Apply concepts to practical challenges:
 - Basic NLP Concepts
 - Parsing
 - Word Embeddings
-- Sentiment Analysis
+- Sentiment Analysis in English
+- Sentiment Analysis in Japanese
 <!-- - Named Entity Recognition -->
 
 <a id='llms'></a>
