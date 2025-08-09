@@ -120,6 +120,8 @@ to apply learned techniques to real-world scenarios.
         - Regression Tasks
         - Classification Tasks
     - [3.2 Deep Learning](#deep-learning)
+        - Computer Vision
+        - Sequence Modelling
     - [3.3 Recommender Systems](#recommender-systems)
     - [3.4 NLP](#nlp)
     - [3.5 LMMs](#llms)
