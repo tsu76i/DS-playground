@@ -1,8 +1,7 @@
 import numpy as np
 from numpy.typing import NDArray
-from typing import List, Dict, Optional
 
-HistoryType = List[Dict[str, NDArray[np.float64] | NDArray[np.int64]]]
+HistoryType = list[dict[str, NDArray[np.float64] | NDArray[np.int64]]]
 
 
 class CustomKMeans:
@@ -43,9 +42,9 @@ class CustomKMeans:
         self.max_iters = max_iters
         self.tol = tol
         self.rng = np.random.default_rng(random_state)
-        self.centroids: Optional[NDArray[np.float64]] = None
-        self.labels: Optional[NDArray[np.int64]] = None
-        self.history: Optional[HistoryType] = None
+        self.centroids: NDArray[np.float64] | None = None
+        self.labels: NDArray[np.int64] = None
+        self.history: HistoryType | None = None
         self.disp_conv = disp_conv
         self.n_iter_ = 0
 

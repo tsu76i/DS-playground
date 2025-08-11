@@ -1,8 +1,7 @@
 import numpy as np
 from numpy.typing import NDArray
-from typing import List, Dict, Tuple
 
-HistoryType = List[Dict[str, NDArray[np.float64] | NDArray[np.int64]]]
+HistoryType = list[dict[str, NDArray[np.float64] | NDArray[np.int64]]]
 
 
 class KMeansMetrics:
@@ -68,7 +67,7 @@ class KMeansMetrics:
         overall_mean = np.mean(self.X, axis=0)
         return np.sum((self.X - overall_mean) ** 2)
 
-    def evaluate(self) -> Tuple[float, float, float]:
+    def evaluate(self) -> tuple[float, float, float]:
         """
         Evaluate WCSS, BCSS, and TSS metrics.
 

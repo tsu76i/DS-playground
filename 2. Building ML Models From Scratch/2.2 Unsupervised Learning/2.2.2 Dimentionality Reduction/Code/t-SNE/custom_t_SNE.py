@@ -1,7 +1,6 @@
 import numpy as np
 from numpy.typing import NDArray
 from scipy.spatial.distance import pdist, squareform
-from typing import Tuple
 import random
 
 
@@ -54,7 +53,7 @@ class CustomTSNE:
 
     def _shannon_and_p_dist(
         self, D_i: NDArray[np.float64], beta: float
-    ) -> Tuple[float, NDArray[np.float64]]:
+    ) -> tuple[float, NDArray[np.float64]]:
         """
         Compute Shannon entropy and probability distribution with numerical stability.
 
@@ -149,7 +148,7 @@ class CustomTSNE:
 
     def _low_dimensional_affinities(
         self, Y: NDArray[np.float64]
-    ) -> Tuple[NDArray[np.float64], NDArray[np.float64]]:
+    ) -> tuple[NDArray[np.float64], NDArray[np.float64]]:
         """
         Compute low-dimensional affinity matrix Q and distance matrix D.
 

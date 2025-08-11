@@ -1,6 +1,5 @@
 import numpy as np
 from numpy.typing import NDArray
-from typing import Optional
 
 
 class DecisionStump:
@@ -19,9 +18,9 @@ class DecisionStump:
         Initialise the decision stump with default values.
         """
         self.polarity: int = 1
-        self.feature_index: Optional[int] = None
-        self.threshold: Optional[float] = None
-        self.alpha: Optional[float] = None
+        self.feature_index: int | None = None
+        self.threshold: float | None = None
+        self.alpha: float | None = None
 
     def predict(self, X: NDArray[np.float64]) -> NDArray[np.int8]:
         """

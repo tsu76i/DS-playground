@@ -1,5 +1,4 @@
 import numpy as np
-from typing import Any, Dict, List, Tuple
 from numpy.typing import NDArray
 
 
@@ -34,7 +33,7 @@ class CustomSGBRegressor:
         self.learning_rate = learning_rate
         self.max_depth = max_depth
         self.min_samples_leaf = min_samples_leaf
-        self.models: List[Dict[str, Any] | float] = []
+        self.models: list[dict | float] = []
         self.initial_prediction: float = 0.0
         self.sub_samples = sub_samples  # Added
         self.sub_features = sub_features  # Added
@@ -105,7 +104,7 @@ class CustomSGBRegressor:
         y: NDArray[np.float64],
         feature_index: int,
         threshold: float,
-    ) -> Tuple[
+    ) -> tuple[
         NDArray[np.float64],
         NDArray[np.float64],
         NDArray[np.float64],
@@ -129,7 +128,7 @@ class CustomSGBRegressor:
 
     def _best_split(
         self, X: NDArray[np.float64], y: NDArray[np.float64], min_samples_leaf: int
-    ) -> Tuple[int | None, float | None]:
+    ) -> tuple[int | None, float | None]:
         """
         Find the best feature and threshold to split the dataset, minimising weighted variance.
 
@@ -169,7 +168,7 @@ class CustomSGBRegressor:
         max_depth: int,
         min_samples_leaf: int,
         depth: int = 0,
-    ) -> Dict[str, Any] | float:
+    ) -> dict | float:
         """
         Recursively build a regression tree.
 
@@ -200,9 +199,7 @@ class CustomSGBRegressor:
             ),
         }
 
-    def _predict_tree(
-        self, tree: Dict[str, Any] | float, x: NDArray[np.float64]
-    ) -> float:
+    def _predict_tree(self, tree: dict | float, x: NDArray[np.float64]) -> float:
         """
         Predict the target value for a single sample using the regression tree.
 
@@ -221,7 +218,7 @@ class CustomSGBRegressor:
         return float(tree)
 
     def _predict_tree_batch(
-        self, tree: Dict[str, Any] | float, X: NDArray[np.float64]
+        self, tree: dict | float, X: NDArray[np.float64]
     ) -> NDArray[np.float64]:
         """
         Predict target values for a batch of samples using the regression tree.

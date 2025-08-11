@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-from typing import Tuple
 from numpy.typing import NDArray
 from scipy.spatial.distance import cdist
 
@@ -45,7 +44,7 @@ class CustomKNNClassifier:
 
     def predict(
         self, X_test: pd.DataFrame
-    ) -> Tuple[str, NDArray[np.int64], NDArray[np.str_]] | NDArray[np.str_]:
+    ) -> tuple[str, NDArray[np.int64], NDArray[np.str_]] | NDArray[np.str_]:
         """
         Predicts the labels for the given test data.
 

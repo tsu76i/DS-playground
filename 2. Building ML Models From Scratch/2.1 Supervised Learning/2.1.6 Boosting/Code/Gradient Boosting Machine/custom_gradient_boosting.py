@@ -1,5 +1,4 @@
 import numpy as np
-from typing import Tuple, List, Dict, Any
 from numpy.typing import NDArray
 
 
@@ -28,7 +27,7 @@ class CustomGBRegressor:
         self.learning_rate = learning_rate
         self.max_depth = max_depth
         self.min_samples_leaf = min_samples_leaf
-        self.models: List[Dict[str, Any] | float] = []
+        self.models: list[dict | float] = []
         self.initial_prediction: float = 0.0
 
     def fit(self, X: NDArray[np.float64], y: NDArray[np.float64]) -> None:
@@ -82,7 +81,7 @@ class CustomGBRegressor:
         y: NDArray[np.float64],
         feature_index: int,
         threshold: float,
-    ) -> Tuple[
+    ) -> tuple[
         NDArray[np.float64],
         NDArray[np.float64],
         NDArray[np.float64],
@@ -106,7 +105,7 @@ class CustomGBRegressor:
 
     def _best_split(
         self, X: NDArray[np.float64], y: NDArray[np.float64], min_samples_leaf: int
-    ) -> Tuple[int | None, float | None]:
+    ) -> tuple[int | None, float | None]:
         """
         Find the best feature and threshold to split the dataset, minimising weighted variance.
 
@@ -142,7 +141,7 @@ class CustomGBRegressor:
         max_depth: int,
         min_samples_leaf: int,
         depth: int = 0,
-    ) -> Dict[str, Any] | float:
+    ) -> dict | float:
         """
         Recursively build a regression tree.
 
@@ -173,9 +172,7 @@ class CustomGBRegressor:
             ),
         }
 
-    def _predict_tree(
-        self, tree: Dict[str, Any] | float, x: NDArray[np.float64]
-    ) -> float:
+    def _predict_tree(self, tree: dict | float, x: NDArray[np.float64]) -> float:
         """
         Predict the target value for a single sample using the regression tree.
 
@@ -194,7 +191,7 @@ class CustomGBRegressor:
         return float(tree)
 
     def _predict_tree_batch(
-        self, tree: Dict[str, Any] | float, X: NDArray[np.float64]
+        self, tree: dict | float, X: NDArray[np.float64]
     ) -> NDArray[np.float64]:
         """
         Predict target values for a batch of samples using the regression tree.

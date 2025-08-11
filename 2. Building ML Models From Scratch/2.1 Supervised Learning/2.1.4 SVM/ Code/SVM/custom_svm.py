@@ -1,6 +1,5 @@
 import numpy as np
-from typing import Callable
-from typing import Tuple
+from collections.abc import Callable
 from numpy.typing import NDArray
 
 KernelFunctionType = Callable[[NDArray[np.float64], NDArray[np.float64]], float]
@@ -128,7 +127,7 @@ class CustomSVM:
 
     def bounds(
         self, y_i: int, y_j: int, alpha_i: float, alpha_j: float
-    ) -> Tuple[float, float]:
+    ) -> tuple[float, float]:
         """
         Compute the bounds for alpha_j during optimisation.
 

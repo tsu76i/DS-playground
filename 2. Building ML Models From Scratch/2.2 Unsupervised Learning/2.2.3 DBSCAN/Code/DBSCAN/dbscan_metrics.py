@@ -1,11 +1,10 @@
 import pandas as pd
 import numpy as np
 from numpy.typing import NDArray
-from typing import List, Tuple, Dict
 
 
 class DBSCANMetrics:
-    def silhouette_score(X: NDArray[np.float64], labels: List[int]) -> np.float64:
+    def silhouette_score(X: NDArray[np.float64], labels: list[int]) -> np.float64:
         """
         Compute silhouette score for clustering results (excluding noise points).
 
@@ -63,7 +62,7 @@ class DBSCANMetrics:
             return float("nan")
         return np.mean(silhouette_vals[valid_points]).round(4)
 
-    def noise_ratio_and_cluster_count(labels: List[int]) -> Tuple[float, int]:
+    def noise_ratio_and_cluster_count(labels: list[int]) -> tuple[float, int]:
         """
         Calculate noise ratio and cluster count for DBSCAN results.
 
@@ -85,7 +84,7 @@ class DBSCANMetrics:
         n_clusters = len(unique_labels)
         return noise_ratio, n_clusters
 
-    def evaluate(X: pd.DataFrame, labels: List[int]) -> Dict[str, float | int]:
+    def evaluate(X: pd.DataFrame, labels: list[int]) -> dict[str, float | int]:
         """
         Evaluate DBSCAN clustering results using key metrics.
 

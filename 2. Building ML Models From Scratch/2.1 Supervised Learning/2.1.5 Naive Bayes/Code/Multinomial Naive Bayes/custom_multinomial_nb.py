@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-from typing import List, Dict
 
 
 class CustomMultinomialNB:
@@ -9,10 +8,10 @@ class CustomMultinomialNB:
 
     Attributes:
         alpha (float): Smoothing parameter (default = 1.0)
-        priors_ (Dict[str, float]): Prior probabilities per class
+        priors_ (dict[str, float]): Prior probabilities per class
         likelihoods_ (pd.DataFrame): Likelihood probabilities (shape: [n_classes, n_features])
         log_likelihoods_ (np.ndarray): Precomputed log-likelihoods (shape: [n_classes, n_features])
-        classes_ (List[str]): Unique class labels
+        classes_ (list[str]): Unique class labels
         feature_names_ (pd.Index): Feature names from training data
     """
 
@@ -49,7 +48,7 @@ class CustomMultinomialNB:
         self.likelihoods_ = self._calculate_likelihoods(X, y)
         self.log_likelihoods_ = np.log(self.likelihoods_.values)
 
-    def predict(self, X: pd.DataFrame) -> List[str]:
+    def predict(self, X: pd.DataFrame) -> list[str]:
         """
         Predict class labels for documents in X.
 
@@ -72,7 +71,7 @@ class CustomMultinomialNB:
 
         return [self.classes_[idx] for idx in max_indices]
 
-    def _calculate_priors(self, y: pd.Series) -> Dict[str, float]:
+    def _calculate_priors(self, y: pd.Series) -> dict[str, float]:
         """
         Calculate prior probabilities for each class in the target variable.
 

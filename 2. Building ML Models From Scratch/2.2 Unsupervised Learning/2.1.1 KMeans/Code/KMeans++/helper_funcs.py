@@ -2,15 +2,14 @@ from numpy.typing import NDArray
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-from typing import List, Dict, Tuple
 
-HistoryType = List[Dict[str, NDArray[np.float64] | NDArray[np.int64]]]
+HistoryType = list[dict[str, NDArray[np.float64] | NDArray[np.int64]]]
 
 
 class HelperFuncs:
     def train_test_split(
         X: NDArray, y: NDArray, test_size: float = 0.2, random_state: int = None
-    ) -> Tuple[NDArray, NDArray, NDArray, NDArray]:
+    ) -> tuple[NDArray, NDArray, NDArray, NDArray]:
         """
         Split arrays or matrices into random train and test subsets.
 
@@ -49,10 +48,10 @@ class HelperFuncs:
 
     def plot_kmeans_clusters(
         df: pd.DataFrame,
-        features: List[str],
-        clusters_list: List[NDArray[np.int64]],
-        centroids_list: List[NDArray[np.float64]],
-        palette: List[str],
+        features: list[str],
+        clusters_list: list[NDArray[np.int64]],
+        centroids_list: list[NDArray[np.float64]],
+        palette: list[str],
     ) -> None:
         """
         Plot K-Means clustered data with centroids for given features.
@@ -118,7 +117,7 @@ class HelperFuncs:
         X: NDArray[np.float64],
         history: HistoryType,
         title: str,
-        palette: List[str],
+        palette: list[str],
         steps: int,
     ) -> None:
         """
@@ -181,7 +180,7 @@ class HelperFuncs:
         plt.tight_layout()
         plt.show()
 
-    def plot_elbow_curve(k_values: List[int], wcss_values: List[float]) -> None:
+    def plot_elbow_curve(k_values: list[int], wcss_values: list[float]) -> None:
         """
         Plot the elbow curve to determine optimal k.
 
@@ -219,10 +218,10 @@ class HelperFuncs:
         plt.show()
 
     def plot_evaluation_metrics(
-        k_values: List[int],
-        wcss_list: List[float],
-        bcss_list: List[float],
-        tss_list: List[float],
+        k_values: list[int],
+        wcss_list: list[float],
+        bcss_list: list[float],
+        tss_list: list[float],
     ) -> None:
         """
         Plot WCSS, BCSS, and TSS metrics against k values.
@@ -251,10 +250,10 @@ class HelperFuncs:
 
     def plot_results(
         X: NDArray[np.float64],
-        labels: List[int],
-        centroids: List[float],
+        labels: list[int],
+        centroids: list[float],
         title: str,
-        palette: List[str],
+        palette: list[str],
     ) -> None:
         # For consistency of cluster colours
         colors = palette.as_hex()

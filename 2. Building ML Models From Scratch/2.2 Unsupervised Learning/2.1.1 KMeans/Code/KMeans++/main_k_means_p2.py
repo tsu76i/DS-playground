@@ -1,13 +1,12 @@
 import numpy as np
 import seaborn as sns
 from numpy.typing import NDArray
-from typing import List, Dict
 from sklearn.datasets import make_blobs, make_circles
 from custom_k_means import CustomKMeans
 from custom_k_means_p2 import CustomKMeansP2
 from helper_funcs import HelperFuncs
 
-HistoryType = List[Dict[str, NDArray[np.float64] | NDArray[np.int64]]]
+HistoryType = list[dict[str, NDArray[np.float64] | NDArray[np.int64]]]
 
 
 def main():

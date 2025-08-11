@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-from typing import Dict
 from numpy.typing import NDArray
 from node import Node
 
@@ -94,7 +93,7 @@ class CustomDecisionTreeClassifier:
         )
         return parent_metric - weighted_metric
 
-    def best_split(self, X: pd.DataFrame, y: pd.Series) -> Dict[str, int | str | float]:
+    def best_split(self, X: pd.DataFrame, y: pd.Series) -> dict[str, int | str | float]:
         """
         Find the best feature and threshold to split the dataset.
 
@@ -109,7 +108,7 @@ class CustomDecisionTreeClassifier:
               - 'threshold': Threshold value for the split.
         """
         best_info_gain = float("-inf")
-        best_split: Dict = None
+        best_split: dict = None
         n_features: int = X.shape[1]
 
         # Iterate over all features.
@@ -162,7 +161,7 @@ class CustomDecisionTreeClassifier:
             return Node(type="leaf", value=np.argmax(np.bincount(y)))
 
         # Find the best split
-        split: Dict = self.best_split(X, y)
+        split: dict = self.best_split(X, y)
         if not split:
             return Node(type="leaf", value=np.argmax(np.bincount(y)))
 

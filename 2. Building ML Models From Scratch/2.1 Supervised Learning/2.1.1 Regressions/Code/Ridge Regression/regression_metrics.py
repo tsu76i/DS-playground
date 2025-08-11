@@ -1,6 +1,5 @@
 import numpy as np
 from numpy.typing import NDArray
-from typing import Tuple
 
 
 class RegressionMetrics:
@@ -34,7 +33,7 @@ class RegressionMetrics:
         r2 = 1 - (ss_residual / ss_total)
         return r2
 
-    def evaluate(self) -> Tuple[float, float, float, float]:
+    def evaluate(self) -> tuple[float, float, float, float]:
         """
         Calculate and return evaluation metrics for a regression model, including MSE, RMSE, MAE, and R-squared.
 

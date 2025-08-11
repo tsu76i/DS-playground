@@ -3,12 +3,11 @@ import pandas as pd
 import seaborn as sns
 from sklearn.datasets import load_iris
 from numpy.typing import NDArray
-from typing import List, Dict
 from helper_funcs import HelperFuncs
 from kmeans_metrics import KMeansMetrics
 from custom_k_means import CustomKMeans
 
-HistoryType = List[Dict[str, NDArray[np.float64] | NDArray[np.int64]]]
+HistoryType = list[dict[str, NDArray[np.float64] | NDArray[np.int64]]]
 
 
 def main():

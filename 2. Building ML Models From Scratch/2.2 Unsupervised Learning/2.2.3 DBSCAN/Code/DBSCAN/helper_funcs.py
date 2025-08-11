@@ -2,7 +2,6 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 from numpy.typing import NDArray
-from typing import Tuple
 
 
 class HelperFuncs:
@@ -27,7 +26,7 @@ class HelperFuncs:
             k_distances[i] = sorted_dist[k - 1]  # k-th neighbour (index k)
         return k_distances
 
-    def find_optimal_params(X: pd.DataFrame) -> Tuple[float, int]:
+    def find_optimal_params(X: pd.DataFrame) -> tuple[float, int]:
         """
         Determine optimal DBSCAN parameters using the k-distance elbow method.
         Also plot a k-distance graph.

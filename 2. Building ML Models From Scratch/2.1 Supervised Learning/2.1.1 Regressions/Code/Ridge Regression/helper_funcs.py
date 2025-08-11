@@ -1,5 +1,4 @@
 import numpy as np
-from typing import Dict, Any
 from numpy.typing import NDArray
 from custom_ridge_regression import CustomRidgeRegression
 
@@ -27,7 +26,7 @@ class HelperFuncs:
         alpha: float = 0.001,
         epochs: int = 20000,
         random_state: int = 42,
-    ) -> Dict[str, Any]:
+    ) -> dict:
         """
         Perform k-fold cross-validation for CustomRidgeRegression over a grid of lambda values.
 

@@ -1,13 +1,12 @@
 import numpy as np
 import pandas as pd
 from numpy.typing import NDArray
-from typing import Tuple
 
 
 class HelperFuncs:
     def train_test_split(
         X: pd.DataFrame, y: pd.Series, test_size: float = 0.2, random_state: int = None
-    ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series]:
+    ) -> tuple[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series]:
         """
         Split arrays or matrices into random train and test subsets.
 

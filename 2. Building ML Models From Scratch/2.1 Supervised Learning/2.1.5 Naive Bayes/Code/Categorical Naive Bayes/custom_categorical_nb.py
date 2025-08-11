@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-from typing import List, Dict
 
 
 class CustomCategoricalNB:
@@ -12,10 +11,10 @@ class CustomCategoricalNB:
 
     Attributes:
         alpha (float): Smoothing parameter (default=1.0).
-        priors_ (Dict[str, float]): Class prior probabilities.
-        likelihoods_ (Dict[str, Dict[str, Dict[str, float]]]): Feature likelihood probabilities.
+        priors_ (dict[str, float]): Class prior probabilities.
+        likelihoods_ (dict[str, dict[str, dict[str, float]]]): Feature likelihood probabilities.
         classes_ (NDArray[np.str_]): Unique class labels.
-        feature_names_ (List[str]): Feature names from training data.
+        feature_names_ (list[str]): Feature names from training data.
     """
 
     def __init__(self, alpha: float = 1.0) -> None:
@@ -48,7 +47,7 @@ class CustomCategoricalNB:
         self.priors_ = self._calculate_priors(y)
         self.likelihoods_ = self._calculate_likelihoods(X, y)
 
-    def predict(self, X: pd.DataFrame) -> List[str]:
+    def predict(self, X: pd.DataFrame) -> list[str]:
         """
         Predict class labels using Categorical Naive Bayes.
 
@@ -70,7 +69,7 @@ class CustomCategoricalNB:
             predictions.append(max(log_posteriors, key=log_posteriors.get))
         return predictions
 
-    def _calculate_priors(self, y: pd.Series) -> Dict[str, float]:
+    def _calculate_priors(self, y: pd.Series) -> dict[str, float]:
         """
         Calculate prior probabilities for each class in the target variable.
 
@@ -84,7 +83,7 @@ class CustomCategoricalNB:
 
     def _calculate_likelihoods(
         self, X: pd.DataFrame, y: pd.Series
-    ) -> Dict[str, Dict[str, Dict[str, float]]]:
+    ) -> dict[str, dict[str, dict[str, float]]]:
         """
         Calculate conditional probabilities for feature values given each class.
 
@@ -123,7 +122,7 @@ class CustomCategoricalNB:
 
         return likelihoods
 
-    def _calculate_posteriors(self, x: Dict[str, str]) -> Dict[str, float]:
+    def _calculate_posteriors(self, x: dict[str, str]) -> dict[str, float]:
         """
         Calculate log-posterior probabilities for all classes given a sample.
 

@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-from typing import Tuple, List, Dict, Any, Optional
 from tqdm import tqdm
 from numpy.typing import NDArray
 
@@ -50,7 +49,7 @@ class CustomCatBoost:
         return enc
 
     def apply_ordered_target_encoding(
-        self, df: pd.DataFrame, cat_cols: List[str], target: str
+        self, df: pd.DataFrame, cat_cols: list[str], target: str
     ) -> pd.DataFrame:
         """
         Apply ordered target encoding to all categorical columns in a DataFrame.
@@ -70,7 +69,7 @@ class CustomCatBoost:
 
     def find_best_split(
         self, X: NDArray[np.float64], y: NDArray[np.float64]
-    ) -> Tuple[Optional[int], Optional[float], NDArray[np.bool_], NDArray[np.bool_]]:
+    ) -> tuple[int | None, float | None, NDArray[np.bool_], NDArray[np.bool_]]:
         """
         Find the best feature and split value to minimise the weighted variance of the target.
 
@@ -117,7 +116,7 @@ class CustomCatBoost:
 
     def build_tree(
         self, X: NDArray[np.float64], y: NDArray[np.float64], depth: int = 0
-    ) -> Dict[str, Any] | float:
+    ) -> dict | float:
         """
         Recursively build a decision tree for regression.
 
@@ -146,9 +145,7 @@ class CustomCatBoost:
             "right": self.build_tree(X[best_right], y[best_right], depth + 1),
         }
 
-    def predict_tree(
-        self, node: Dict[str, Any] | float, row: NDArray[np.float64]
-    ) -> float:
+    def predict_tree(self, node: dict | float, row: NDArray[np.float64]) -> float:
         """
         Predict the target value for a single sample using the decision tree.
 
@@ -171,9 +168,9 @@ class CustomCatBoost:
         X: NDArray[np.float64],
         y: NDArray[np.int64],
         n_classes: int,
-        cat_cols: Optional[List[str]] = None,
-        df: Optional[pd.DataFrame] = None,
-        target_col: Optional[str] = None,
+        cat_cols: list[str] | None = None,
+        df: pd.DataFrame | None = None,
+        target_col: str | None = None,
     ) -> None:
         """
         Fit the gradient boosting model for multi-class classification.
@@ -210,7 +207,7 @@ class CustomCatBoost:
 
     def predict(
         self, X: NDArray[np.float64], n_classes: int
-    ) -> Tuple[NDArray[np.int64], NDArray[np.float64]]:
+    ) -> tuple[NDArray[np.int64], NDArray[np.float64]]:
         """
         Predict class labels and probabilities using the fitted gradient boosting model.
 
@@ -237,10 +234,10 @@ class CustomCatBoost:
         X: NDArray[np.float64],
         y: NDArray[np.int64],
         n_classes: int,
-        cat_cols: Optional[List[str]] = None,
-        df: Optional[pd.DataFrame] = None,
-        target_col: Optional[str] = None,
-    ) -> Tuple[NDArray[np.int64], NDArray[np.float64]]:
+        cat_cols: list[str] | None = None,
+        df: pd.DataFrame | None = None,
+        target_col: str | None = None,
+    ) -> tuple[NDArray[np.int64], NDArray[np.float64]]:
         """
         Fit the model and predict class labels and probabilities.
 

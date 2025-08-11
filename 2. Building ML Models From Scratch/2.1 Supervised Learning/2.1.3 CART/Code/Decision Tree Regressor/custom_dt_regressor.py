@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-from typing import Dict
 from numpy.typing import NDArray
 from node import Node
 
@@ -93,7 +92,7 @@ class CustomDecisionTreeRegressor:
         )
         return parent_metric - weighted_metric
 
-    def best_split(self, X: pd.DataFrame, y: pd.Series) -> Dict[int, np.float64]:
+    def best_split(self, X: pd.DataFrame, y: pd.Series) -> dict[int, np.float64]:
         """
         Find the best feature and threshold to split the dataset.
 
@@ -105,7 +104,7 @@ class CustomDecisionTreeRegressor:
             Best split details with keys 'feature_index' and 'threshold'.
         """
         best_info_gain = float("-inf")
-        best_split: Dict = None
+        best_split: dict = None
         n_features: int = X.shape[1]
 
         for feature in range(n_features):

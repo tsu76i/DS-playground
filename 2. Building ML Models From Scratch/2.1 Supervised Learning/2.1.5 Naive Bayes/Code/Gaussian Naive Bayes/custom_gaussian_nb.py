@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-from typing import Dict, List, Tuple
 
 
 class CustomGaussianNB:
@@ -46,7 +45,7 @@ class CustomGaussianNB:
         self.priors_ = self._calculate_priors(y)
         self.means_, self.variances_ = self._calculate_params(X, y)
 
-    def predict(self, X: pd.DataFrame) -> List[str]:
+    def predict(self, X: pd.DataFrame) -> list[str]:
         """
         Predict class labels for input samples.
 
@@ -68,7 +67,7 @@ class CustomGaussianNB:
             predictions.append(max(log_posteriors, key=log_posteriors.get))
         return predictions
 
-    def _calculate_priors(self, y: pd.Series) -> Dict[str, float]:
+    def _calculate_priors(self, y: pd.Series) -> dict[str, float]:
         """
         Calculate prior probabilities for each class.
 
@@ -82,7 +81,7 @@ class CustomGaussianNB:
 
     def _calculate_params(
         self, X: pd.DataFrame, y: pd.Series
-    ) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    ) -> tuple[pd.DataFrame, pd.DataFrame]:
         """
         Compute Gaussian parameters (mean and variance) per class.
 
@@ -97,7 +96,7 @@ class CustomGaussianNB:
         variances = X.groupby(y).var(ddof=0) + self.epsilon
         return means, variances
 
-    def _calculate_log_posteriors(self, sample: pd.Series) -> Dict[str, float]:
+    def _calculate_log_posteriors(self, sample: pd.Series) -> dict[str, float]:
         """
         Calculate log-posterior probabilities for a single sample.
 

@@ -1,5 +1,4 @@
 import numpy as np
-from typing import Tuple, List, Dict, Any
 from numpy.typing import NDArray
 
 
@@ -35,11 +34,11 @@ class CustomXGBoost:
         self.lambda_ = lambda_
         self.gamma = gamma
         self.initial_prediction = None
-        self.models: List[Dict[str, Any] | float] = []
+        self.models: list[dict | float] = []
 
     def _compute_gradients_and_hessians(
         self, y_true: NDArray[np.float64], y_pred: NDArray[np.float64]
-    ) -> Tuple[NDArray[np.float64], NDArray[np.float64]]:
+    ) -> tuple[NDArray[np.float64], NDArray[np.float64]]:
         """
         Compute gradients and Hessians for squared error loss.
 
@@ -59,7 +58,7 @@ class CustomXGBoost:
         X: NDArray[np.float64],
         gradients: NDArray[np.float64],
         hessians: NDArray[np.float64],
-    ) -> Tuple[int, float, float]:
+    ) -> tuple[int, float, float]:
         """
         Find the best split for a node in the XGBoost tree.
 
@@ -102,7 +101,7 @@ class CustomXGBoost:
         gradients: NDArray[np.float64],
         hessians: NDArray[np.float64],
         depth: int = 0,
-    ) -> Dict[str, Any] | float:
+    ) -> dict | float:
         """
         Recursively build a decision tree for XGBoost.
 
@@ -133,9 +132,7 @@ class CustomXGBoost:
             ),
         }
 
-    def _predict_tree(
-        self, tree: Dict[str, Any] | float, x: NDArray[np.float64]
-    ) -> float:
+    def _predict_tree(self, tree: dict | float, x: NDArray[np.float64]) -> float:
         """
         Predict the output for a single sample using a decision tree.
 
@@ -155,7 +152,7 @@ class CustomXGBoost:
         return tree
 
     def _predict_tree_batch(
-        self, tree: Dict[str, Any] | float, X: NDArray[np.float64]
+        self, tree: dict | float, X: NDArray[np.float64]
     ) -> NDArray[np.float64]:
         """
         Predict outputs for a batch of samples using a decision tree.

@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-from typing import Tuple, Dict, Optional, Any
 from numpy.typing import NDArray
 from joblib import Parallel, delayed
 
@@ -13,8 +12,8 @@ class CustomRandomForestRegressor:
         min_samples_leaf: int = 1,
         min_samples_split=2,
         metric: str = "variance",
-        max_features: Optional[int] = None,
-        random_state: Optional[int] = None,
+        max_features: int | None = None,
+        random_state: int | None = None,
         n_jobs: int = -1,
     ) -> None:
         self.n_estimators = n_estimators
@@ -83,9 +82,9 @@ class CustomRandomForestRegressor:
         self,
         X: pd.DataFrame,
         y: pd.Series,
-        n_samples: Optional[int] = None,
-        random_state: Optional[int] = None,
-    ) -> Tuple[pd.DataFrame, pd.Series]:
+        n_samples: int | None = None,
+        random_state: int | None = None,
+    ) -> tuple[pd.DataFrame, pd.Series]:
         """
         Generate a bootstrap sample from the dataset.
 
@@ -104,9 +103,7 @@ class CustomRandomForestRegressor:
         indices = rng.randint(0, len(X), size=n_samples)
         return X.iloc[indices], y.iloc[indices]
 
-    def _best_split(
-        self, X: NDArray[np.float64], y: NDArray[np.float64]
-    ) -> Dict[str, Any]:
+    def _best_split(self, X: NDArray[np.float64], y: NDArray[np.float64]) -> dict:
         """
         Find the best split for a dataset.
 
@@ -173,9 +170,7 @@ class CustomRandomForestRegressor:
 
         return best_split
 
-    def _build_tree(
-        self, X: pd.DataFrame, y: pd.Series, depth: int = 0
-    ) -> Dict[str, Any]:
+    def _build_tree(self, X: pd.DataFrame, y: pd.Series, depth: int = 0) -> dict:
         """
         Recursively build a decision tree.
 
@@ -255,16 +250,14 @@ class CustomRandomForestRegressor:
             delayed(self._build_single_tree)(X, y, seed) for seed in seeds
         )
 
-    def _build_single_tree(
-        self, X: pd.DataFrame, y: pd.Series, seed: int
-    ) -> Dict[str, Any]:
+    def _build_single_tree(self, X: pd.DataFrame, y: pd.Series, seed: int) -> dict:
         """
         Build a single decision tree with bootstrap sampling.
         """
         X_boot, y_boot = self._bootstrap_sample(X, y, random_state=seed)
         return self._build_tree(X_boot, y_boot)
 
-    def _traverse_tree(self, x: np.ndarray, tree: Dict[str, Any]) -> float:
+    def _traverse_tree(self, x: np.ndarray, tree: dict) -> float:
         """
         Traverse a tree to make a prediction for a single sample.
 

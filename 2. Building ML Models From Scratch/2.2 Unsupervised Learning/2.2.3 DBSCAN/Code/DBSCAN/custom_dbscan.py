@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 from numpy.typing import NDArray
 from tqdm import tqdm
-from typing import List
 
 
 class CustomDBSCAN:
@@ -27,7 +26,7 @@ class CustomDBSCAN:
         self.min_pts = min_pts
         self.labels_ = None  # Cluster labels will be stored here after fitting
 
-    def _find_neighbours(self, data: NDArray[np.float64], point_idx: int) -> List[int]:
+    def _find_neighbours(self, data: NDArray[np.float64], point_idx: int) -> list[int]:
         """
         Find neighbours within epsilon distance of a point.
 
@@ -47,7 +46,7 @@ class CustomDBSCAN:
         data: NDArray[np.float64],
         labels: NDArray[np.int16],
         point_idx: int,
-        neighbours: List[int],
+        neighbours: list[int],
         cluster_id: int,
     ) -> None:
         """

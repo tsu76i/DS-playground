@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-from typing import Tuple, Dict, Optional, Any
 from numpy.typing import NDArray
 from joblib import Parallel, delayed
 from scipy.stats import mode
@@ -13,8 +12,8 @@ class CustomRandomForestClassifier:
         max_depth: int = 15,
         min_samples_leaf: int = 1,
         metric: str = "gini",
-        max_features: Optional[int] = None,
-        random_state: Optional[int] = None,
+        max_features: int | None = None,
+        random_state: int | None = None,
         n_jobs: int = -1,
     ) -> None:
         self.n_estimators = n_estimators
@@ -77,9 +76,9 @@ class CustomRandomForestClassifier:
         self,
         X: pd.DataFrame,
         y: pd.Series,
-        n_samples: Optional[int] = None,
-        random_state: Optional[int] = None,
-    ) -> Tuple[pd.DataFrame, pd.Series]:
+        n_samples: int | None = None,
+        random_state: int | None = None,
+    ) -> tuple[pd.DataFrame, pd.Series]:
         """
         Generate a bootstrap sample from the dataset.
 
@@ -100,7 +99,7 @@ class CustomRandomForestClassifier:
 
     def _best_split(
         self, X: NDArray[np.float64], y: NDArray[np.int16]
-    ) -> Dict[str, Any]:
+    ) -> dict:
         """
         Find the best split for a dataset.
 
@@ -168,7 +167,7 @@ class CustomRandomForestClassifier:
 
     def _build_tree(
         self, X: pd.DataFrame, y: pd.Series, depth: int = 0
-    ) -> Dict[str, Any]:
+    ) -> dict:
         """
         Recursively build a decision tree.
 
@@ -250,14 +249,14 @@ class CustomRandomForestClassifier:
 
     def _build_single_tree(
         self, X: pd.DataFrame, y: pd.Series, seed: int
-    ) -> Dict[str, Any]:
+    ) -> dict:
         """
         Build a single decision tree with bootstrap sampling.
         """
         X_boot, y_boot = self._bootstrap_sample(X, y, random_state=seed)
         return self._build_tree(X_boot, y_boot)
 
-    def _traverse_tree(self, x: np.ndarray, tree: Dict[str, Any]) -> int:
+    def _traverse_tree(self, x: np.ndarray, tree: dict) -> int:
         """
         Traverse a tree to make a prediction for a single sample.
 

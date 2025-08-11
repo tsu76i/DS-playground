@@ -1,5 +1,4 @@
 import numpy as np
-from typing import Tuple, List
 from numpy.typing import NDArray
 
 
@@ -20,8 +19,8 @@ class ClassificationMetrics:
         self.y_pred = y_pred
 
     def confusion_matrix(
-        self, class_names: List[str] = None
-    ) -> Tuple[NDArray[np.int64], List[str]]:
+        self, class_names: list[str] = None
+    ) -> tuple[NDArray[np.int64], list[str]]:
         """
         Calculate the confusion matrix.
 
@@ -89,8 +88,8 @@ class ClassificationMetrics:
         return 2 * (prec * rec) / (prec + rec + 1e-7)
 
     def evaluate(
-        self, class_names: List[str] = None
-    ) -> Tuple[np.float64, np.float64, np.float64, np.float64, NDArray[np.int64]]:
+        self, class_names: list[str] = None
+    ) -> tuple[np.float64, np.float64, np.float64, np.float64, NDArray[np.int64]]:
         """
         Calculate evaluation metrics including accuracy, precision, recall, and F1-score for each class.
 

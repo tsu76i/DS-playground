@@ -1,12 +1,11 @@
 import numpy as np
 from numpy.typing import NDArray
-from typing import Tuple
 
 
 class HelperFuncs:
     def preprocess_data(
         images: NDArray[np.int64], labels: NDArray[np.int64]
-    ) -> Tuple[NDArray[np.float64], NDArray[np.int64]]:
+    ) -> tuple[NDArray[np.float64], NDArray[np.int64]]:
         """
         Preprocess image and label data for neural network training.
 
