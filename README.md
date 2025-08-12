@@ -254,6 +254,7 @@ Apply concepts to practical challenges:
 - Word Embeddings
 - Sentiment Analysis in English
 - Sentiment Analysis in Japanese
+- Named Entity Recognition (NER)
 <!-- - Named Entity Recognition -->
 
 <a id='llms'></a>
