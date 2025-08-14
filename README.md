@@ -235,6 +235,7 @@ Apply concepts to practical challenges:
     - Handwritten Digit Recognition
     - Versatile Object Recognition
     - Animal Identification
+    - Brain Tumour Classification
 - [Sequence Modelling](https://github.com/tsu76i/DS-playground/tree/main/3.%20Practical%20Exercises/3.2%20Deep%20Learning/3.2.2%20Sequence%20Modelling)
     - Energy Consumption Forecasting
     - Stock Market Prediction
