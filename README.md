@@ -258,12 +258,13 @@ Apply concepts to practical challenges:
 - Sentiment Analysis in English
 - Sentiment Analysis in Japanese
 - Named Entity Recognition (NER)
-<!-- - Named Entity Recognition -->
+- Text Generation
 
 <a id='llms'></a>
 
 ### [3.5 LLMs](https://github.com/tsu76i/DS-playground/tree/main/3.%20Practical%20Exercises/3.5%20LLM)
-- Text Generation
+- LangChain Fundamentals
+
 
 <p align="right"><a href="#top">[↑ Top]</a></p>
 <!-- 3. PRACTICAL EXERCISES END -->
