@@ -1,8 +1,7 @@
-import os
 import streamlit as st
 from dotenv import load_dotenv
 from langchain_openai import OpenAI
-from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
+from langchain_core.messages import HumanMessage, AIMessage
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import (
     ChatPromptTemplate,
@@ -49,12 +48,13 @@ language = st.sidebar.selectbox(
     ],
 )
 
-# ! Initialise chat history
+# ! === INITIALISATION ===
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = [AIMessage(content="Hello! how can I help you?")]
 
 model = OpenAI(name="gpt-4o-mini")
 
+# ! === DISPLAY (MAIN) ===
 # Iterate all the chat history
 for message in st.session_state.chat_history:
     if isinstance(message, AIMessage):
@@ -66,6 +66,7 @@ for message in st.session_state.chat_history:
     with st.chat_message(role):
         st.markdown(message.content)
 
+# ! === USER INPUT + AI RESPONSE ===
 # User input
 if prompt := st.chat_input("Type a message..."):
     st.session_state.chat_history.append(HumanMessage(prompt))
